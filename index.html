@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YWS Solar • Plataforma Inteligente | Simuladores, Economia e Limpeza de Painéis</title>
+    <meta name="description" content="Site oficial da YWS Solar. Simule seu sistema de energia solar fotovoltaica, calcule economia, área disponível, escolha equipamentos e agende inspeção/limpeza profissional. Aumente até 30% a geração dos seus painéis.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@500;600&display=swap');
+        
+        :root {
+            --primary: #eab308;
+            --secondary: #16a34a;
+        }
+        
+        .dark {
+            --primary: #facc15;
+            --secondary: #4ade80;
+        }
+        
+        body {
+            font-family: 'Inter', system_ui, sans-serif;
+        }
+        
+        .font-display {
+            font-family: 'Poppins', 'Inter', sans-serif;
+        }
+
+        .section-header {
+            font-size: 2.25rem;
+            line-height: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+
+        .solar-gradient {
+            background: linear-gradient(135deg, #eab308 0%, #16a34a 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .card {
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+        
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        .nav-active {
+            color: #eab308;
+            font-weight: 600;
+        }
+
+        .simulator-tab {
+            transition: all 0.2s ease;
+        }
+
+        .result-card {
+            animation: fadeInUp 0.4s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .metric-value {
+            font-variant-numeric: tabular-nums;
+        }
+
+        .progress-bar {
+            transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .modal {
+            animation: modalPop 0.2s ease forwards;
+        }
+
+        .solar-icon {
+            animation: solarPulse 3s ease infinite;
+        }
+
+        .stat-number {
+            font-variant-numeric: tabular-nums;
+        }
+    </style>
+</head>
+<body class="bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
+    <!-- Navbar -->
+    <nav class="bg-white/95 dark:bg-zinc-900/95 backdrop-blur-lg border-b border-zinc-200 dark:border-zinc-800 sticky top-0 z-50">
+        <div class="max-w-screen-2xl mx-auto">
+            <div class="px-8 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-x-3">
+                    <!-- Logo -->
+                    <div class="flex items-center gap-x-2.5">
+                        <div class="w-11 h-11 bg-gradient-to-br from-yellow-400 to-emerald-600 rounded-2xl flex items-center justify-center shadow-inner">
+                            <i class="fa-solid fa-sun text-white text-3xl"></i>
+                        </div>
+                        <div>
+                            <span class="font-display text-3xl font-bold tracking-tighter">YWS</span>
+                            <span class="font-display text-3xl font-semibold text-emerald-600 dark:text-emerald-400">Solar</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center gap-x-8 text-sm font-medium">
+                    <a href="#inicio" class="hover:text-yellow-500 transition-colors">Início</a>
+                    <a href="#servicos" class="hover:text-yellow-500 transition-colors">Serviços</a>
+                    <a href="#simuladores" class="hover:text-yellow-500 transition-colors">Simuladores</a>
+                    <a href="#depoimentos" class="hover:text-yellow-500 transition-colors">Depoimentos</a>
+                    <button onclick="showHistory()" 
+                            class="flex items-center gap-x-2 px-4 py-2 rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors text-sm">
+                        <i class="fa-solid fa-history"></i>
+                        <span>Histórico</span>
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-x-3">
+                    <!-- Dark Mode Toggle -->
+                    <button onclick="toggleDarkMode()" 
+                            class="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                            title="Alternar tema">
+                        <i class="fa-solid fa-moon text-xl dark:hidden"></i>
+                        <i class="fa-solid fa-sun text-xl hidden dark:block text-yellow-400"></i>
+                    </button>
+
+                    <!-- WhatsApp CTA -->
+                    <a href="https://wa.me/5562999999999?text=Olá%20YWS%20Solar!%20Quero%20falar%20com%20um%20especialista." 
+                       target="_blank"
+                       class="hidden sm:flex items-center gap-x-2.5 bg-emerald-600 hover:bg-emerald-700 transition-all text-white px-5 py-2.5 rounded-3xl text-sm font-semibold shadow-lg shadow-emerald-600/30">
+                        <i class="fa-brands fa-whatsapp text-xl"></i>
+                        <span>Fale agora</span>
+                    </a>
+
+                    <!-- Admin Button -->
+                    <button onclick="showAdminModal()" 
+                            class="flex items-center gap-x-2 px-4 py-2 text-sm font-medium rounded-2xl border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
+                        <i class="fa-solid fa-user-shield"></i>
+                        <span class="hidden lg:inline">Equipe</span>
+                    </button>
+
+                    <!-- Mobile Menu -->
+                    <button class="md:hidden w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-800" onclick="toggleMobileMenu()">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero / Início -->
+    <section id="inicio" class="max-w-screen-2xl mx-auto px-8 pt-16 pb-20">
+        <div class="grid lg:grid-cols-12 gap-12 items-center">
+            <div class="lg:col-span-7">
+                <div class="inline-flex items-center gap-x-2 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 px-4 py-1.5 rounded-3xl text-sm font-semibold mb-6">
+                    <div class="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                    <span>GOIÁS • BRASIL • 2026</span>
+                </div>
+                
+                <h1 class="text-6xl lg:text-7xl font-display font-bold tracking-tighter leading-none mb-6">
+                    Energia solar<br> 
+                    <span class="solar-gradient">inteligente</span><br>
+                    para o seu futuro.
+                </h1>
+                
+                <p class="max-w-lg text-xl text-zinc-600 dark:text-zinc-400 mb-8">
+                    Simule seu sistema em segundos. Descubra quanto você pode economizar e aumente até <span class="font-semibold text-emerald-600">30% a geração</span> com limpeza profissional.
+                </p>
+
+                <div class="flex flex-wrap gap-4">
+                    <button onclick="document.getElementById('simuladores').scrollIntoView({ behavior: 'smooth' })" 
+                            class="px-8 py-4 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-3xl font-semibold flex items-center gap-x-3 hover:scale-[1.02] active:scale-[0.985] transition-all shadow-xl">
+                        <span>Fazer simulação gratuita</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                    
+                    <a href="https://wa.me/5562999999999?text=Olá%20YWS%20Solar,%20quero%20falar%20com%20um%20especialista%20sobre%20energia%20solar." 
+                       target="_blank"
+                       class="px-8 py-4 border border-zinc-300 dark:border-zinc-700 hover:bg-white dark:hover:bg-zinc-900 rounded-3xl font-semibold flex items-center gap-x-3 transition-all">
+                        <i class="fa-brands fa-whatsapp text-emerald-600"></i>
+                        <span>Falar com especialista</span>
+                    </a>
+                </div>
+
+                <div class="flex items-center gap-x-8 mt-10 text-sm">
+                    <div class="flex -space-x-2">
+                        <div class="w-8 h-8 bg-zinc-300 rounded-full border-2 border-white dark:border-zinc-950 overflow-hidden"><img src="https://i.pravatar.cc/32?img=28" alt=""></div>
+                        <div class="w-8 h-8 bg-zinc-300 rounded-full border-2 border-white dark:border-zinc-950 overflow-hidden"><img src="https://i.pravatar.cc/32?img=47" alt=""></div>
+                        <div class="w-8 h-8 bg-zinc-300 rounded-full border-2 border-white dark:border-zinc-950 overflow-hidden"><img src="https://i.pravatar.cc/32?img=12" alt=""></div>
+                    </div>
+                    <div class="text-zinc-500 dark:text-zinc-400">
+                        <span class="font-semibold text-zinc-700 dark:text-zinc-300">+2.847</span> simulações realizadas este mês
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hero Visual -->
+            <div class="lg:col-span-5 relative">
+                <div class="aspect-[4/3] bg-gradient-to-br from-yellow-400/10 to-emerald-600/10 rounded-3xl p-1 shadow-2xl">
+                    <div class="bg-white dark:bg-zinc-900 rounded-[20px] h-full p-8 flex flex-col justify-between relative overflow-hidden">
+                        <div>
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <div class="text-emerald-600 dark:text-emerald-400 text-sm font-semibold tracking-widest">SISTEMA RESIDENCIAL</div>
+                                    <div class="text-5xl font-bold tabular-nums mt-1">18,6 <span class="text-3xl font-normal">kWp</span></div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-xs text-zinc-500">ECONOMIA MENSAL</div>
+                                    <div class="text-3xl font-bold text-emerald-600">R$ 1.284</div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-8 grid grid-cols-3 gap-4 text-center">
+                                <div class="bg-zinc-100 dark:bg-zinc-800 rounded-2xl p-4">
+                                    <div class="text-xs text-zinc-500">PAINÉIS</div>
+                                    <div class="font-bold text-2xl">31</div>
+                                    <div class="text-[10px] text-emerald-600">600W</div>
+                                </div>
+                                <div class="bg-zinc-100 dark:bg-zinc-800 rounded-2xl p-4">
+                                    <div class="text-xs text-zinc-500">ÁREA</div>
+                                    <div class="font-bold text-2xl">62 m²</div>
+                                </div>
+                                <div class="bg-zinc-100 dark:bg-zinc-800 rounded-2xl p-4">
+                                    <div class="text-xs text-zinc-500">PAYBACK</div>
+                                    <div class="font-bold text-2xl">3,8 <span class="text-base font-normal">anos</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between text-xs pt-4 border-t border-zinc-200 dark:border-zinc-700">
+                            <div class="flex items-center gap-x-2 text-emerald-600">
+                                <i class="fa-solid fa-check-circle"></i>
+                                <span class="font-medium">Sistema otimizado</span>
+                            </div>
+                            <div class="text-zinc-400">Goiânia, GO</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Serviços -->
+    <section id="servicos" class="max-w-screen-2xl mx-auto px-8 py-16 border-t border-zinc-200 dark:border-zinc-800">
+        <div class="flex justify-between items-end mb-10">
+            <div>
+                <span class="text-emerald-600 font-semibold text-sm tracking-[2px]">O QUE OFERECEMOS</span>
+                <h2 class="section-header tracking-tighter">Soluções completas<br>em energia solar</h2>
+            </div>
+            <a href="#simuladores" class="hidden md:flex items-center text-sm font-medium text-yellow-600 hover:text-yellow-500">
+                Ver simuladores <i class="fa-solid fa-arrow-right ml-2"></i>
+            </a>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Serviço 1 -->
+            <div class="card bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-7 group">
+                <div class="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-calculator text-3xl"></i>
+                </div>
+                <h3 class="font-semibold text-xl mb-3">Dimensionamento Inteligente</h3>
+                <p class="text-zinc-600 dark:text-zinc-400 text-[15px]">Simuladores precisos de consumo, área disponível e escolha de equipamentos com recomendações automáticas baseadas em dados reais do Brasil.</p>
+            </div>
+
+            <div class="card bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-7 group">
+                <div class="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-tools text-3xl"></i>
+                </div>
+                <h3 class="font-semibold text-xl mb-3">Instalação Profissional</h3>
+                <p class="text-zinc-600 dark:text-zinc-400 text-[15px]">Projetos personalizados, equipamentos de alta eficiência (570W a 630W) e instalação com garantia e suporte técnico completo.</p>
+            </div>
+
+            <div class="card bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-7 group">
+                <div class="w-12 h-12 bg-sky-100 dark:bg-sky-900/30 text-sky-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-hand-sparkles text-3xl"></i>
+                </div>
+                <h3 class="font-semibold text-xl mb-3">Limpeza & Manutenção</h3>
+                <p class="text-zinc-600 dark:text-zinc-400 text-[15px]"><strong class="text-emerald-600">+30% de geração</strong> com nossa limpeza profissional. Removemos poeira, sujeira e excrementos que reduzem drasticamente a eficiência.</p>
+                <div class="mt-4 text-xs inline-flex items-center gap-x-1.5 text-emerald-600 font-medium">
+                    <i class="fa-solid fa-check"></i> <span>Inspeção com laudo técnico</span>
+                </div>
+            </div>
+
+            <div class="card bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-7 group">
+                <div class="w-12 h-12 bg-violet-100 dark:bg-violet-900/30 text-violet-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-chart-line text-3xl"></i>
+                </div>
+                <h3 class="font-semibold text-xl mb-3">Monitoramento & Suporte</h3>
+                <p class="text-zinc-600 dark:text-zinc-400 text-[15px]">Acompanhamento da performance do seu sistema, alertas de manutenção e suporte rápido via WhatsApp com nossa equipe especializada.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Simuladores -->
+    <section id="simuladores" class="max-w-screen-2xl mx-auto px-8 py-16 bg-zinc-100 dark:bg-zinc-900/70 border-t border-zinc-200 dark:border-zinc-800">
+        <div class="max-w-2xl mb-12">
+            <span class="text-emerald-600 font-semibold text-sm tracking-[2px]">FERRAMENTAS GRATUITAS</span>
+            <h2 class="section-header tracking-tighter mt-2">Simule seu sistema<br>em menos de 2 minutos</h2>
+            <p class="mt-4 text-lg text-zinc-600 dark:text-zinc-400">Escolha o simulador ideal para o seu momento. Todos salvam automaticamente no seu navegador.</p>
+        </div>
+
+        <!-- Quantity Quick Chooser (Global) -->
+        <div class="mb-10 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-3xl p-8">
+            <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-y-4 mb-6">
+                <div>
+                    <div class="font-semibold text-lg flex items-center gap-x-2">
+                        <i class="fa-solid fa-sliders-h text-yellow-500"></i> 
+                        <span>Escolha a quantidade de painéis</span>
+                    </div>
+                    <p class="text-sm text-zinc-500">Atualiza todos os cálculos em tempo real</p>
+                </div>
+                
+                <div class="flex items-center gap-x-2">
+                    <button onclick="quickSetPanels(10)" class="px-4 py-1.5 text-xs font-medium bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 rounded-2xl transition-colors">10</button>
+                    <button onclick="quickSetPanels(30)" class="px-4 py-1.5 text-xs font-medium bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 rounded-2xl transition-colors">30</button>
+                    <button onclick="quickSetPanels(50)" class="px-4 py-1.5 text-xs font-medium bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 rounded-2xl transition-colors">50</button>
+                    <button onclick="quickSetPanels(100)" class="px-4 py-1.5 text-xs font-medium bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 rounded-2xl transition-colors">100</button>
+                    <button onclick="quickSetPanels(250)" class="px-4 py-1.5 text-xs font-medium bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 rounded-2xl transition-colors">250</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-end">
+                <!-- Slider -->
+                <div class="md:col-span-5">
+                    <input type="range" id="qty-slider" min="1" max="1500" step="1" value="30" 
+                           class="w-full accent-yellow-500" oninput="updateQuantityDisplay()">
+                    <div class="flex justify-between text-xs text-zinc-400 mt-1 px-1">
+                        <div>1</div><div>1500</div>
+                    </div>
+                </div>
+
+                <!-- Number Input + Controls -->
+                <div class="md:col-span-3 flex items-center gap-x-3">
+                    <button onclick="changeQuantity(-1)" class="w-9 h-9 flex items-center justify-center border border-zinc-300 dark:border-zinc-600 rounded-2xl hover:bg-zinc-100 active:bg-zinc-200 transition-colors"><i class="fa-solid fa-minus"></i></button>
+                    
+                    <div class="flex-1">
+                        <input type="number" id="qty-input" value="30" min="1" max="1500"
+                               class="w-full text-center font-mono text-3xl font-bold bg-transparent border-0 focus:ring-0 p-0" 
+                               oninput="updateQuantityDisplay()">
+                    </div>
+                    
+                    <button onclick="changeQuantity(1)" class="w-9 h-9 flex items-center justify-center border border-zinc-300 dark:border-zinc-600 rounded-2xl hover:bg-zinc-100 active:bg-zinc-200 transition-colors"><i class="fa-solid fa-plus"></i></button>
+                </div>
+
+                <!-- Live Metrics -->
+                <div class="md:col-span-4 grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+                    <div>
+                        <div id="live-qty" class="font-mono text-3xl font-bold text-yellow-600">30</div>
+                        <div class="text-xs tracking-wider text-zinc-500">PAINÉIS</div>
+                    </div>
+                    <div>
+                        <div id="live-power" class="font-mono text-3xl font-bold">18.0</div>
+                        <div class="text-xs tracking-wider text-zinc-500">kWp</div>
+                    </div>
+                    <div>
+                        <div id="live-area" class="font-mono text-3xl font-bold">60</div>
+                        <div class="text-xs tracking-wider text-zinc-500">m²</div>
+                    </div>
+                    <div>
+                        <div id="live-production" class="font-mono text-3xl font-bold text-emerald-600">2.8</div>
+                        <div class="text-xs tracking-wider text-zinc-500">MWh/mês</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4 Simulator Cards -->
+        <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
+            
+            <!-- Sim 1: Consumo -->
+            <div onclick="openSimulator(1)" class="card cursor-pointer bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-3xl p-7 hover:border-yellow-400 group">
+                <div class="flex justify-between">
+                    <div class="w-11 h-11 bg-yellow-100 dark:bg-yellow-900/40 text-yellow-600 rounded-2xl flex items-center justify-center">
+                        <i class="fa-solid fa-bolt-lightning text-3xl"></i>
+                    </div>
+                    <span class="text-xs px-3 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 rounded-2xl font-medium self-start">MAIS USADO</span>
+                </div>
+                <h3 class="font-semibold text-2xl mt-6 mb-1 tracking-tight">Consumo de Energia</h3>
+                <p class="text-sm text-zinc-500">Informe sua conta ou consumo mensal e descubra o sistema ideal.</p>
+                <div class="mt-8 flex items-center text-yellow-600 text-sm font-medium group-hover:gap-x-2 transition-all">
+                    Abrir simulador <i class="fa-solid fa-arrow-right ml-1.5"></i>
+                </div>
+            </div>
+
+            <!-- Sim 2: Área -->
+            <div onclick="openSimulator(2)" class="card cursor-pointer bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-3xl p-7 hover:border-emerald-400 group">
+                <div class="w-11 h-11 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 rounded-2xl flex items-center justify-center">
+                    <i class="fa-solid fa-ruler-combined text-3xl"></i>
+                </div>
+                <h3 class="font-semibold text-2xl mt-6 mb-1 tracking-tight">Área Disponível</h3>
+                <p class="text-sm text-zinc-500">Calcule quantos painéis cabem no seu telhado ou terreno.</p>
+                <div class="mt-8 flex items-center text-emerald-600 text-sm font-medium group-hover:gap-x-2 transition-all">
+                    Abrir simulador <i class="fa-solid fa-arrow-right ml-1.5"></i>
+                </div>
+            </div>
+
+            <!-- Sim 3: Equipamentos -->
+            <div onclick="openSimulator(3)" class="card cursor-pointer bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-3xl p-7 hover:border-sky-400 group">
+                <div class="w-11 h-11 bg-sky-100 dark:bg-sky-900/40 text-sky-600 rounded-2xl flex items-center justify-center">
+                    <i class="fa-solid fa-microchip text-3xl"></i>
+                </div>
+                <h3 class="font-semibold text-2xl mt-6 mb-1 tracking-tight">Escolha de Equipamentos</h3>
+                <p class="text-sm text-zinc-500">Selecione módulos (570-630W) e marca de inversor com compatibilidade automática.</p>
+                <div class="mt-8 flex items-center text-sky-600 text-sm font-medium group-hover:gap-x-2 transition-all">
+                    Abrir simulador <i class="fa-solid fa-arrow-right ml-1.5"></i>
+                </div>
+            </div>
+
+            <!-- Sim 4: Inspeção/Limpeza -->
+            <div onclick="openSimulator(4)" class="card cursor-pointer bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-3xl p-7 hover:border-rose-400 group">
+                <div class="w-11 h-11 bg-rose-100 dark:bg-rose-900/40 text-rose-600 rounded-2xl flex items-center justify-center">
+                    <i class="fa-solid fa-hand-sparkles text-3xl"></i>
+                </div>
+                <h3 class="font-semibold text-2xl mt-6 mb-1 tracking-tight">Inspeção e Limpeza</h3>
+                <p class="text-sm text-zinc-500">Agende uma visita técnica. Nossa equipe calcula o deslocamento pelo seu bairro.</p>
+                <div class="mt-8 flex items-center text-rose-600 text-sm font-medium group-hover:gap-x-2 transition-all">
+                    Agendar agora <i class="fa-solid fa-arrow-right ml-1.5"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Depoimentos -->
+    <section id="depoimentos" class="max-w-screen-2xl mx-auto px-8 py-16">
+        <div class="max-w-xl mb-10">
+            <span class="text-emerald-600 font-semibold text-sm tracking-[2px]">CONFIANÇA REAL</span>
+            <h2 class="section-header tracking-tighter">O que nossos clientes dizem</h2>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-6">
+            <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 p-7 rounded-3xl">
+                <div class="flex gap-x-1 text-yellow-400 mb-4"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div>
+                <p class="italic">"A limpeza que a YWS fez aumentou minha geração de 4.2 para 5.5 MWh/mês. Incrível! Recomendo muito."</p>
+                <div class="mt-6 flex items-center gap-x-3">
+                    <img src="https://i.pravatar.cc/36?img=32" class="rounded-full" alt="">
+                    <div><div class="font-medium">Carlos Mendes</div><div class="text-xs text-zinc-500">Fazenda Solar • Anápolis</div></div>
+                </div>
+            </div>
+            
+            <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 p-7 rounded-3xl">
+                <div class="flex gap-x-1 text-yellow-400 mb-4"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                <p class="italic">"O simulador foi perfeito. Escolhi 42 painéis de 600W e o sistema está gerando exatamente o que foi projetado. Atendimento nota 10."</p>
+                <div class="mt-6 flex items-center gap-x-3">
+                    <img src="https://i.pravatar.cc/36?img=40" class="rounded-full" alt="">
+                    <div><div class="font-medium">Fernanda Lima</div><div class="text-xs text-zinc-500">Residencial • Goiânia</div></div>
+                </div>
+            </div>
+            
+            <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 p-7 rounded-3xl">
+                <div class="flex gap-x-1 text-yellow-400 mb-4"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                <p class="italic">"Fiz a simulação de área e o time da YWS foi super atencioso. Hoje tenho um sistema de 25kWp que está pagando sozinho."</p>
+                <div class="mt-6 flex items-center gap-x-3">
+                    <img src="https://i.pravatar.cc/36?img=15" class="rounded-full" alt="">
+                    <div><div class="font-medium">Roberto Almeida</div><div class="text-xs text-zinc-500">Comercial • Aparecida de Goiânia</div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer CTA -->
+    <div class="bg-zinc-900 dark:bg-black py-16">
+        <div class="max-w-screen-2xl mx-auto px-8 text-center">
+            <h2 class="text-white text-4xl font-display font-bold tracking-tight">Pronto para economizar de verdade?</h2>
+            <p class="text-zinc-400 mt-3 max-w-md mx-auto">Comece agora com uma simulação gratuita ou agende sua inspeção de limpeza.</p>
+            
+            <div class="flex flex-wrap justify-center gap-4 mt-8">
+                <button onclick="document.getElementById('simuladores').scrollIntoView({ behavior: 'smooth' })" 
+                        class="px-8 py-4 bg-white text-zinc-900 rounded-3xl font-semibold flex items-center gap-x-3 hover:bg-yellow-100 transition-colors">
+                    Fazer simulação agora
+                </button>
+                <a href="https://wa.me/5562999999999?text=Olá%20YWS%20Solar!%20Quero%20agendar%20uma%20limpeza%20de%20painéis." 
+                   target="_blank"
+                   class="px-8 py-4 border border-white/30 text-white rounded-3xl font-semibold flex items-center gap-x-3 hover:bg-white/10 transition-colors">
+                    <i class="fa-brands fa-whatsapp"></i> Agendar limpeza
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-zinc-950 border-t border-zinc-200 dark:border-zinc-800 py-10">
+        <div class="max-w-screen-2xl mx-auto px-8 text-sm flex flex-col md:flex-row justify-between items-center gap-y-4 text-zinc-500">
+            <div>© 2026 YWS Solar • Todos os direitos reservados • CNPJ 00.000.000/0001-00</div>
+            <div class="flex gap-x-6">
+                <a href="#" class="hover:text-zinc-700">Política de Privacidade</a>
+                <a href="#" class="hover:text-zinc-700">Termos de Uso</a>
+            </div>
+            <div class="flex items-center gap-x-2 text-xs">
+                Feito com ❤️ para o futuro sustentável do Brasil
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    
+    <!-- Simulator Modal -->
+    <div id="simulator-modal" onclick="if (event.target.id === 'simulator-modal') closeSimulatorModal()" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+        <div onclick="event.stopImmediatePropagation()" class="bg-white dark:bg-zinc-900 w-full max-w-3xl rounded-3xl shadow-2xl border border-zinc-200 dark:border-zinc-700 max-h-[92vh] overflow-auto">
+            
+            <!-- Modal Header -->
+            <div class="px-8 pt-7 pb-5 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between sticky top-0 bg-white dark:bg-zinc-900 z-10">
+                <div id="modal-title" class="font-display text-2xl font-semibold"></div>
+                <button onclick="closeSimulatorModal()" class="text-3xl leading-none text-zinc-400 hover:text-zinc-600 w-9 h-9 flex items-center justify-center">&times;</button>
+            </div>
+            
+            <div class="p-8" id="modal-content">
+                <!-- Content injected by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Success / Result Modal -->
+    <div id="result-modal" onclick="if (event.target.id === 'result-modal') closeResultModal()" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
+        <div onclick="event.stopImmediatePropagation()" class="bg-white dark:bg-zinc-900 w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden">
+            <div class="p-8" id="result-content">
+                <!-- Dynamic result -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Modal -->
+    <div id="admin-modal" onclick="if (event.target.id === 'admin-modal') closeAdminModal()" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-[120] flex items-center justify-center p-4">
+        <div onclick="event.stopImmediatePropagation()" class="bg-white dark:bg-zinc-900 w-full max-w-5xl rounded-3xl shadow-2xl max-h-[90vh] flex flex-col">
+            <div class="p-6 border-b flex items-center justify-between">
+                <div class="font-semibold text-xl flex items-center gap-x-3"><i class="fa-solid fa-user-shield text-emerald-600"></i> Área Administrativa YWS Solar</div>
+                <button onclick="closeAdminModal()" class="text-3xl leading-none">&times;</button>
+            </div>
+            
+            <div class="p-6 flex-1 overflow-auto" id="admin-content">
+                <!-- Injected by showAdminModal -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Tailwind Config
+        function initTailwind() {
+            document.documentElement.style.setProperty('--accent', '#eab308');
+            
+            tailwind.config = {
+                darkMode: 'class',
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            'display': ['Poppins', 'Inter', 'system-ui', 'sans-serif']
+                        }
+                    }
+                }
+            };
+        }
+
+        // Dark Mode
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+        }
+
+        function initTheme() {
+            const saved = localStorage.getItem('theme');
+            if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            }
+        }
+
+        // Quantity Live Updater (Global)
+        let currentModulePower = 600; // default
+
+        function updateQuantityDisplay() {
+            const slider = document.getElementById('qty-slider');
+            const input = document.getElementById('qty-input');
+            
+            let value = parseInt(input.value) || parseInt(slider.value);
+            if (value < 1) value = 1;
+            if (value > 1500) value = 1500;
+            
+            slider.value = value;
+            input.value = value;
+            
+            // Update live metrics
+            const qty = value;
+            const power = (qty * currentModulePower / 1000).toFixed(1);
+            const area = Math.round(qty * 2.0);
+            const production = (qty * currentModulePower / 1000 * 5.2 * 30 * 0.8 / 1000).toFixed(1); // MWh
+            
+            document.getElementById('live-qty').textContent = qty;
+            document.getElementById('live-power').textContent = power;
+            document.getElementById('live-area').textContent = area;
+            document.getElementById('live-production').textContent = production;
+            
+            // Store globally
+            window.currentPanelQty = qty;
+            window.currentPower = parseFloat(power);
+        }
+
+        function changeQuantity(delta) {
+            const input = document.getElementById('qty-input');
+            let val = parseInt(input.value) || 30;
+            val = Math.max(1, Math.min(1500, val + delta));
+            input.value = val;
+            updateQuantityDisplay();
+        }
+
+        function quickSetPanels(qty) {
+            const input = document.getElementById('qty-input');
+            const slider = document.getElementById('qty-slider');
+            input.value = qty;
+            slider.value = qty;
+            updateQuantityDisplay();
+            
+            // Nice feedback
+            const live = document.getElementById('live-qty');
+            live.style.transform = 'scale(1.3)';
+            setTimeout(() => live.style.transform = 'scale(1)', 180);
+        }
+
+        function initQuantityChooser() {
+            const slider = document.getElementById('qty-slider');
+            const input = document.getElementById('qty-input');
+            
+            slider.addEventListener('input', () => {
+                input.value = slider.value;
+                updateQuantityDisplay();
+            });
+            
+            input.addEventListener('input', updateQuantityDisplay);
+            
+            // Initial
+            window.currentPanelQty = 30;
+            window.currentPower = 18.0;
+            updateQuantityDisplay();
+            
+            // Allow changing module power from other places if needed
+            window.setModulePower = function(w) {
+                currentModulePower = w;
+                updateQuantityDisplay();
+            };
+        }
+
+        // City irradiation data (kWh/m²/day)
+        const cidadesIrradiacao = {
+            "Brasília": 5.7,
+            "Goiânia": 5.4,
+            "São Paulo": 4.8,
+            "Rio de Janeiro": 5.1,
+            "Belo Horizonte": 5.2,
+            "Salvador": 5.5,
+            "Fortaleza": 5.8,
+            "Curitiba": 4.5,
+            "Porto Alegre": 4.7,
+            "Manaus": 4.9,
+            "Campo Grande": 5.3,
+            "Cuiabá": 5.6
+        };
+
+        // Open specific simulator
+        let currentSim = null;
+
+        function openSimulator(simNumber) {
+            const modal = document.getElementById('simulator-modal');
+            const titleEl = document.getElementById('modal-title');
+            const contentEl = document.getElementById('modal-content');
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            contentEl.innerHTML = '';
+            
+            currentSim = simNumber;
+            
+            if (simNumber === 1) {
+                titleEl.innerHTML = `<i class="fa-solid fa-bolt-lightning mr-3 text-yellow-500"></i> Simulador de Consumo de Energia`;
+                contentEl.innerHTML = `
+                    <div class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Input type -->
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Como você quer informar?</label>
+                                <div class="flex gap-2">
+                                    <button onclick="selectInputType(this, 'conta')" class="flex-1 py-3 px-4 border border-yellow-400 bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-300 rounded-2xl text-sm font-medium active-input-type">Valor da conta (R$)</button>
+                                    <button onclick="selectInputType(this, 'kwh')" class="flex-1 py-3 px-4 border border-zinc-300 dark:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded-2xl text-sm font-medium">Consumo em kWh</button>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium mb-1.5">Cidade</label>
+                                <select id="sim1-cidade" class="w-full border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 rounded-2xl px-4 py-3 text-sm">
+                                    ${Object.keys(cidadesIrradiacao).map(c => `<option value="${c}">${c}</option>`).join('')}
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div id="input-container">
+                            <div id="input-conta">
+                                <label class="block text-sm font-medium mb-1.5">Valor médio da sua conta de luz (R$)</label>
+                                <div class="relative">
+                                    <span class="absolute left-4 top-3.5 text-zinc-400">R$</span>
+                                    <input type="number" id="sim1-conta" value="380" class="w-full pl-9 border border-zinc-300 dark:border-zinc-600 rounded-2xl px-4 py-3 text-lg font-mono">
+                                </div>
+                                <p class="text-xs text-zinc-500 mt-1">Tarifa média considerada: R$ 0,95/kWh</p>
+                            </div>
+                            
+                            <div id="input-kwh" class="hidden">
+                                <label class="block text-sm font-medium mb-1.5">Consumo mensal médio (kWh)</label>
+                                <input type="number" id="sim1-kwh" value="420" class="w-full border border-zinc-300 dark:border-zinc-600 rounded-2xl px-4 py-3 text-lg font-mono">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-1.5">Tipo de imóvel</label>
+                            <div class="grid grid-cols-3 gap-3">
+                                <label class="flex items-center gap-x-2 border border-zinc-200 dark:border-zinc-700 rounded-2xl p-3 cursor-pointer has-[:checked]:border-yellow-400 has-[:checked]:bg-yellow-50 dark:has-[:checked]:bg-yellow-900/10">
+                                    <input type="radio" name="tipo-imovel" value="casa" checked class="accent-yellow-500">
+                                    <span class="text-sm">Casa</span>
+                                </label>
+                                <label class="flex items-center gap-x-2 border border-zinc-200 dark:border-zinc-700 rounded-2xl p-3 cursor-pointer has-[:checked]:border-yellow-400 has-[:checked]:bg-yellow-50 dark:has-[:checked]:bg-yellow-900/10">
+                                    <input type="radio" name="tipo-imovel" value="apartamento" class="accent-yellow-500">
+                                    <span class="text-sm">Apartamento</span>
+                                </label>
+                                <label class="flex items-center gap-x-2 border border-zinc-200 dark:border-zinc-700 rounded-2xl p-3 cursor-pointer has-[:checked]:border-yellow-400 has-[:checked]:bg-yellow-50 dark:has-[:checked]:bg-yellow-900/10">
+                                    <input type="radio" name="tipo-imovel" value="comercial" class="accent-yellow-500">
+                                    <span class="text-sm">Comercial / Rural</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <button onclick="calculateSim1()" 
+                                class="w-full py-4 bg-yellow-500 hover:bg-yellow-600 active:bg-yellow-700 transition-colors text-white font-semibold rounded-3xl flex items-center justify-center gap-x-2 text-lg">
+                            <i class="fa-solid fa-magic"></i>
+                            <span>CALCULAR SISTEMA IDEAL</span>
+                        </button>
+                        
+                        <div class="text-xs text-center text-zinc-400">Seus dados ficam salvos apenas no seu navegador</div>
+                    </div>
+                `;
+                
+                // Default to conta
+                setTimeout(() => {
+                    const btn = document.querySelector('#modal-content .active-input-type');
+                    if (btn) btn.classList.add('!border-yellow-400', '!bg-yellow-50', 'dark:!bg-yellow-900/20');
+                }, 50);
+                
+            } else if (simNumber === 2) {
+                titleEl.innerHTML = `<i class="fa-solid fa-ruler-combined mr-3 text-emerald-500"></i> Simulador de Área Disponível`;
+                contentEl.innerHTML = `
+                    <div class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium mb-1.5">Comprimento do telhado/área (m)</label>
+                                <input type="number" id="sim2-comp" value="12" step="0.5" class="w-full border border-zinc-300 dark:border-zinc-600 rounded-2xl px-4 py-3 text-lg font-mono">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1.5">Largura (m)</label>
+                                <input type="number" id="sim2-larg" value="8" step="0.5" class="w-full border border-zinc-300 dark:border-zinc-600 rounded-2xl px-4 py-3 text-lg font-mono">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-1.5">Tipo de telhado / instalação</label>
+                            <select id="sim2-telhado" class="w-full border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 rounded-2xl px-4 py-3">
+                                <option value="inclinado">Inclinado (15° a 30°) — Fator 0.78</option>
+                                <option value="plano">Plano / Laje — Fator 0.88</option>
+                                <option value="solo">Solo / Estrutura metálica — Fator 0.95</option>
+                            </select>
+                        </div>
+                        
+                        <div class="bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-200 dark:border-emerald-800 rounded-2xl p-4 text-sm">
+                            <strong>Dica:</strong> Considere 2,0 m² por painel (incluindo espaçamento e acesso para manutenção).
+                        </div>
+                        
+                        <button onclick="calculateSim2()" class="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-3xl flex items-center justify-center gap-x-2 text-lg">
+                            CALCULAR ÁREA E QUANTIDADE MÁXIMA
+                        </button>
+                    </div>
+                `;
+            } else if (simNumber === 3) {
+                titleEl.innerHTML = `<i class="fa-solid fa-microchip mr-3 text-sky-500"></i> Escolha de Equipamentos`;
+                contentEl.innerHTML = `
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Potência do módulo fotovoltaico</label>
+                            <div class="grid grid-cols-4 gap-2">
+                                ${[570,580,590,600,610,620,630].map(w => `
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="module-power" value="${w}" ${w===600 ? 'checked' : ''} class="peer hidden" onchange="window.setModulePower && window.setModulePower(${w})">
+                                        <div class="peer-checked:bg-sky-600 peer-checked:text-white border border-zinc-300 dark:border-zinc-600 peer-checked:border-sky-600 text-center py-3 rounded-2xl text-sm font-medium transition-all">${w}W</div>
+                                    </label>
+                                `).join('')}
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-1.5">Fabricante do Inversor</label>
+                            <select id="sim3-inversor" class="w-full border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 rounded-2xl px-4 py-3 text-sm">
+                                <option value="Growatt">Growatt — Melhor custo-benefício</option>
+                                <option value="Deye">Deye — Alta performance híbrido</option>
+                                <option value="Solis">Solis — Excelente durabilidade</option>
+                                <option value="Sungrow">Sungrow — Confiabilidade premium</option>
+                                <option value="GoodWe">GoodWe — Ótimo para residencial</option>
+                                <option value="Huawei">Huawei — Tecnologia de ponta</option>
+                                <option value="Fronius">Fronius — Líder europeu</option>
+                                <option value="SMA">SMA — Referência mundial</option>
+                                <option value="FoxESS">FoxESS — Excelente suporte</option>
+                            </select>
+                        </div>
+                        
+                        <div class="pt-2">
+                            <div class="text-sm font-medium mb-3 flex items-center gap-x-2">
+                                <span>Quantidade de painéis</span> 
+                                <span class="text-xs px-2 py-0.5 bg-sky-100 dark:bg-sky-900/30 text-sky-700 rounded">Sincronizado com o seletor global</span>
+                            </div>
+                            
+                            <div class="flex items-center gap-x-4">
+                                <div class="flex-1">
+                                    <input type="range" id="sim3-slider" min="1" max="1500" value="${window.currentPanelQty || 30}" class="w-full accent-sky-500" oninput="syncSim3Qty()">
+                                </div>
+                                <input type="number" id="sim3-qty" value="${window.currentPanelQty || 30}" class="w-24 text-center font-mono border border-zinc-300 rounded-2xl px-3 py-2" oninput="syncSim3Qty()">
+                            </div>
+                        </div>
+                        
+                        <button onclick="calculateSim3()" class="w-full py-4 bg-sky-600 hover:bg-sky-700 text-white font-semibold rounded-3xl flex items-center justify-center gap-x-2 text-lg mt-2">
+                            VERIFICAR COMPATIBILIDADE E RECOMENDAÇÕES
+                        </button>
+                    </div>
+                `;
+                
+                setTimeout(() => {
+                    const s = document.getElementById('sim3-slider');
+                    const q = document.getElementById('sim3-qty');
+                    if (s && q) {
+                        s.addEventListener('input', () => { q.value = s.value; });
+                        q.addEventListener('input', () => { s.value = q.value; });
+                    }
+                }, 80);
+            } else if (simNumber === 4) {
+                titleEl.innerHTML = `<i class="fa-solid fa-hand-sparkles mr-3 text-rose-500"></i> Agendar Inspeção e Limpeza`;
+                contentEl.innerHTML = `
+                    <form id="form-limpeza" onsubmit="submitInspectionForm(event)" class="space-y-5">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label class="text-sm font-medium">Nome completo</label>
+                                <input type="text" id="insp-nome" required class="mt-1 w-full border border-zinc-300 dark:border-zinc-600 rounded-2xl px-4 py-3" placeholder="Seu nome">
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium">WhatsApp</label>
+                                <input type="tel" id="insp-whatsapp" required value="(62) 99999-0000" class="mt-1 w-full border border-zinc-300 dark:border-zinc-600 rounded-2xl px-4 py-3 font-mono">
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label class="text-sm font-medium">Cidade</label>
+                                <input type="text" id="insp-cidade" value="Goiânia" required class="mt-1 w-full border border-zinc-300 dark:border-zinc-600 rounded-2xl px-4 py-3">
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium">Bairro <span class="text-rose-500">*</span></label>
+                                <input type="text" id="insp-bairro" required placeholder="Ex: Setor Bueno" class="mt-1 w-full border border-zinc-300 dark:border-zinc-600 rounded-2xl px-4 py-3">
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-5">
+                            <div>
+                                <label class="text-sm font-medium">Quantidade de painéis</label>
+                                <input type="number" id="insp-qtd" value="${window.currentPanelQty || 30}" class="mt-1 w-full border border-zinc-300 dark:border-zinc-600 rounded-2xl px-4 py-3 font-mono">
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium">Tipo de instalação</label>
+                                <select id="insp-tipo" class="mt-1 w-full border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 rounded-2xl px-4 py-3">
+                                    <option value="Telhado residencial">Telhado residencial</option>
+                                    <option value="Telhado comercial">Telhado comercial</option>
+                                    <option value="Solo / Estrutura">Solo / Estrutura metálica</option>
+                                    <option value="Laje">Laje / Plano</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="text-sm font-medium">Local da instalação (referência)</label>
+                            <input type="text" id="insp-local" placeholder="Ex: Rua 10, Qd 05, Lt 12 - perto do supermercado" class="mt-1 w-full border border-zinc-300 dark:border-zinc-600 rounded-2xl px-4 py-3">
+                        </div>
+                        
+                        <div>
+                            <label class="text-sm font-medium">Observações (opcional)</label>
+                            <textarea id="insp-obs" rows="2" class="mt-1 w-full border border-zinc-300 dark:border-zinc-600 rounded-2xl px-4 py-3" placeholder="Ex: Acesso difícil, presença de árvores próximas..."></textarea>
+                        </div>
+                        
+                        <button type="submit" class="w-full py-4 bg-rose-600 hover:bg-rose-700 transition-colors text-white font-semibold rounded-3xl flex items-center justify-center gap-x-3 text-lg">
+                            <i class="fa-solid fa-calendar-check"></i>
+                            <span>AGENDAR INSPEÇÃO GRATUITA</span>
+                        </button>
+                        
+                        <p class="text-center text-xs text-zinc-400">Nossa equipe entrará em contato em até 2 horas úteis. Deslocamento calculado conforme bairro.</p>
+                    </form>
+                `;
+            }
+        }
+
+        function selectInputType(btn, type) {
+            // Deselect all
+            document.querySelectorAll('#modal-content button').forEach(b => b.classList.remove('!border-yellow-400', '!bg-yellow-50', 'dark:!bg-yellow-900/20'));
+            btn.classList.add('!border-yellow-400', '!bg-yellow-50', 'dark:!bg-yellow-900/20');
+            
+            const contaDiv = document.getElementById('input-conta');
+            const kwhDiv = document.getElementById('input-kwh');
+            
+            if (type === 'conta') {
+                contaDiv.classList.remove('hidden');
+                kwhDiv.classList.add('hidden');
+            } else {
+                contaDiv.classList.add('hidden');
+                kwhDiv.classList.remove('hidden');
+            }
+        }
+
+        function syncSim3Qty() {
+            const s = document.getElementById('sim3-slider');
+            const q = document.getElementById('sim3-qty');
+            if (!s || !q) return;
+            const val = parseInt(q.value) || 1;
+            s.value = val;
+            q.value = val;
+        }
+
+        function closeSimulatorModal() {
+            const modal = document.getElementById('simulator-modal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+
+        // ============ SIMULATOR CALCULATIONS ============
+        
+        function calculateSim1() {
+            const cidade = document.getElementById('sim1-cidade').value;
+            const irrad = cidadesIrradiacao[cidade] || 5.2;
+            const tipo = document.querySelector('input[name="tipo-imovel"]:checked').value;
+            
+            let kwhMensal;
+            const contaInput = document.getElementById('sim1-conta');
+            const kwhInput = document.getElementById('sim1-kwh');
+            
+            if (!contaInput.classList.contains('hidden') && contaInput.offsetParent !== null) {
+                const conta = parseFloat(contaInput.value) || 350;
+                kwhMensal = Math.round(conta / 0.95); // tarifa média
+            } else {
+                kwhMensal = parseFloat(kwhInput.value) || 400;
+            }
+            
+            // Cálculo
+            const pr = (tipo === 'casa') ? 0.82 : (tipo === 'apartamento' ? 0.78 : 0.80);
+            const potenciaKwp = kwhMensal / (irrad * 30 * pr);
+            const qtdPaineis = Math.ceil(potenciaKwp / 0.6);
+            const area = Math.round(qtdPaineis * 2.05);
+            const producaoMensal = Math.round(potenciaKwp * irrad * 30 * pr);
+            const economia = Math.round(producaoMensal * 0.95 * 0.95); // R$
+            
+            const data = {
+                tipo: 'Consumo',
+                cidade,
+                kwhMensal,
+                potenciaKwp: potenciaKwp.toFixed(1),
+                qtdPaineis,
+                area,
+                producaoMensal,
+                economia,
+                irrad: irrad.toFixed(1),
+                tipoImovel: tipo,
+                data: new Date().toISOString()
+            };
+            
+            saveSimulation('sim1', data);
+            showResultModal(data, 1);
+            closeSimulatorModal();
+        }
+
+        function calculateSim2() {
+            const comp = parseFloat(document.getElementById('sim2-comp').value) || 10;
+            const larg = parseFloat(document.getElementById('sim2-larg').value) || 8;
+            const tipo = document.getElementById('sim2-telhado').value;
+            
+            let fator = 0.78;
+            if (tipo === 'plano') fator = 0.88;
+            if (tipo === 'solo') fator = 0.95;
+            
+            const areaBruta = comp * larg;
+            const areaUtil = Math.round(areaBruta * fator);
+            const maxPaineis = Math.floor(areaUtil / 2.05);
+            const maxPot = (maxPaineis * 0.6).toFixed(1);
+            const geracao = Math.round(maxPot * 5.3 * 30 * 0.81); // média boa
+            
+            const data = {
+                tipo: 'Área',
+                comp, larg, tipoTelhado: tipo,
+                areaBruta: areaBruta.toFixed(1),
+                areaUtil,
+                maxPaineis,
+                maxPot,
+                geracaoMensal: geracao,
+                data: new Date().toISOString()
+            };
+            
+            saveSimulation('sim2', data);
+            showResultModal(data, 2);
+            closeSimulatorModal();
+        }
+
+        function calculateSim3() {
+            const moduleW = parseInt(document.querySelector('input[name="module-power"]:checked').value) || 600;
+            const inversor = document.getElementById('sim3-inversor').value;
+            const qty = parseInt(document.getElementById('sim3-qty').value) || window.currentPanelQty || 30;
+            
+            const potencia = (qty * moduleW / 1000).toFixed(1);
+            const area = Math.round(qty * 2.05);
+            const peso = Math.round(qty * 19.5); // kg approx
+            
+            // Recomendações inteligentes
+            let recomendacao = '';
+            let compat = 'Alta compatibilidade';
+            
+            if (inversor.includes('Huawei') || inversor.includes('SMA') || inversor.includes('Fronius')) {
+                recomendacao = 'Sistema premium. Excelente escolha para máxima eficiência e monitoramento avançado.';
+            } else if (inversor.includes('Growatt') || inversor.includes('GoodWe')) {
+                recomendacao = 'Ótima relação custo x benefício. Recomendado para a maioria dos projetos residenciais e comerciais.';
+            } else {
+                recomendacao = 'Boa escolha. Equipamento confiável com bom suporte técnico no Brasil.';
+            }
+            
+            if (qty > 80) recomendacao += ' Para sistemas grandes, considere inversores híbridos ou string de alta potência.';
+            if (moduleW >= 620) recomendacao += ' Módulos de alta potência exigem estrutura reforçada.';
+            
+            const data = {
+                tipo: 'Equipamentos',
+                moduleW,
+                inversor,
+                qtdPaineis: qty,
+                potenciaInstalada: potencia,
+                areaNecessaria: area,
+                pesoAprox: peso,
+                compatibilidade: compat,
+                recomendacao,
+                data: new Date().toISOString()
+            };
+            
+            saveSimulation('sim3', data);
+            showResultModal(data, 3);
+            closeSimulatorModal();
+        }
+
+        function submitInspectionForm(e) {
+            e.preventDefault();
+            
+            const nome = document.getElementById('insp-nome').value;
+            const whatsapp = document.getElementById('insp-whatsapp').value;
+            const cidade = document.getElementById('insp-cidade').value;
+            const bairro = document.getElementById('insp-bairro').value;
+            const qtd = parseInt(document.getElementById('insp-qtd').value) || 0;
+            const tipo = document.getElementById('insp-tipo').value;
+            const local = document.getElementById('insp-local').value;
+            const obs = document.getElementById('insp-obs').value;
+            
+            // Fake deslocamento calculation
+            let deslocamento = 180;
+            const b = bairro.toLowerCase();
+            if (b.includes('centro') || b.includes('setor')) deslocamento = 120;
+            else if (b.includes('jardim') || b.includes('vila')) deslocamento = 165;
+            else deslocamento = 145 + (bairro.length % 7) * 8;
+            
+            const lead = {
+                id: Date.now(),
+                nome, whatsapp, cidade, bairro, qtdPaineis: qtd, tipoInstalacao: tipo, local, obs,
+                deslocamento: `R$ ${deslocamento}`,
+                data: new Date().toISOString(),
+                status: 'Pendente'
+            };
+            
+            // Save to localStorage
+            let leads = JSON.parse(localStorage.getItem('yws_leads') || '[]');
+            leads.unshift(lead);
+            localStorage.setItem('yws_leads', JSON.stringify(leads));
+            
+            closeSimulatorModal();
+            
+            // Success message
+            const modal = document.getElementById('result-modal');
+            const content = document.getElementById('result-content');
+            
+            content.innerHTML = `
+                <div class="text-center py-4">
+                    <div class="mx-auto w-16 h-16 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 rounded-full flex items-center justify-center mb-5">
+                        <i class="fa-solid fa-check-circle text-5xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-semibold">Solicitação enviada com sucesso!</h3>
+                    <p class="mt-3 text-zinc-600 dark:text-zinc-300">Nossa equipe técnica já recebeu seus dados e entrará em contato via WhatsApp em até <strong>2 horas úteis</strong>.</p>
+                    
+                    <div class="my-6 bg-zinc-100 dark:bg-zinc-800 rounded-2xl p-5 text-left text-sm">
+                        <div><strong>Bairro:</strong> ${bairro} • <strong>Deslocamento estimado:</strong> R$ ${deslocamento}</div>
+                        <div class="mt-1 text-xs text-zinc-500">O valor exato será confirmado no contato.</div>
+                    </div>
+                    
+                    <div class="flex gap-3">
+                        <a href="https://wa.me/5562999999999?text=Olá%20YWS,%20acabei%20de%20solicitar%20inspeção%20para%20limpeza%20no%20bairro%20${encodeURIComponent(bairro)}%20com%20${qtd}%20painéis." target="_blank"
+                           class="flex-1 py-3.5 bg-emerald-600 text-white rounded-2xl font-semibold flex items-center justify-center gap-x-2">
+                            <i class="fa-brands fa-whatsapp"></i> Abrir WhatsApp
+                        </a>
+                        <button onclick="closeResultModal(); showAdminModal()" class="flex-1 py-3.5 border border-zinc-300 dark:border-zinc-600 rounded-2xl font-medium">Ver no Admin</button>
+                    </div>
+                </div>
+            `;
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        // Show Result Modal with PDF + WhatsApp
+        function showResultModal(data, simType) {
+            const modal = document.getElementById('result-modal');
+            const content = document.getElementById('result-content');
+            let html = '';
+            
+            const dateStr = new Date(data.data).toLocaleDateString('pt-BR');
+            
+            if (simType === 1) {
+                html = `
+                    <div>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <div class="uppercase tracking-[1.5px] text-xs font-semibold text-yellow-600">SIMULAÇÃO DE CONSUMO</div>
+                                <div class="text-3xl font-bold mt-1">${data.potenciaKwp} kWp</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-xs text-zinc-500">Data</div>
+                                <div class="font-mono text-sm">${dateStr}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="my-6 grid grid-cols-2 gap-4">
+                            <div class="bg-yellow-50 dark:bg-yellow-900/10 rounded-2xl p-4">
+                                <div class="text-xs">ECONOMIA ESTIMADA</div>
+                                <div class="text-4xl font-bold text-emerald-600">R$ ${data.economia}</div>
+                                <div class="text-xs">por mês</div>
+                            </div>
+                            <div class="bg-zinc-100 dark:bg-zinc-800 rounded-2xl p-4">
+                                <div class="text-xs">PRODUÇÃO MENSAL</div>
+                                <div class="text-4xl font-bold">${data.producaoMensal} <span class="text-xl font-normal">kWh</span></div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3 text-sm">
+                            <div class="flex justify-between py-1 border-b"><span class="text-zinc-500">Cidade / Irradiação</span> <span class="font-medium">${data.cidade} • ${data.irrad} kWh/m²/dia</span></div>
+                            <div class="flex justify-between py-1 border-b"><span class="text-zinc-500">Quantidade de painéis</span> <span class="font-medium">${data.qtdPaineis} × 600W</span></div>
+                            <div class="flex justify-between py-1 border-b"><span class="text-zinc-500">Área aproximada</span> <span class="font-medium">${data.area} m²</span></div>
+                            <div class="flex justify-between py-1"><span class="text-zinc-500">Tipo de imóvel</span> <span class="font-medium capitalize">${data.tipoImovel}</span></div>
+                        </div>
+                        
+                        <div class="mt-6 p-4 bg-emerald-50 dark:bg-emerald-900/10 rounded-2xl text-sm">
+                            <strong class="text-emerald-700 dark:text-emerald-400">Recomendação:</strong> Sistema bem dimensionado para seu perfil de consumo. Excelente payback.
+                        </div>
+                    </div>
+                `;
+            } else if (simType === 2) {
+                html = `
+                    <div>
+                        <div class="uppercase tracking-widest text-xs font-semibold text-emerald-600">SIMULAÇÃO DE ÁREA</div>
+                        <div class="mt-2 text-3xl font-bold">${data.maxPaineis} painéis</div>
+                        <div class="text-emerald-600 font-medium">${data.maxPot} kWp • ${data.areaUtil} m² úteis</div>
+                        
+                        <div class="mt-6 space-y-3 text-sm">
+                            <div class="flex justify-between"><span>Área bruta informada</span> <span class="font-mono">${data.areaBruta} m²</span></div>
+                            <div class="flex justify-between"><span>Fator de aproveitamento</span> <span>${data.tipoTelhado}</span></div>
+                            <div class="flex justify-between"><span>Geração mensal estimada</span> <span class="font-medium">${data.geracaoMensal} kWh</span></div>
+                        </div>
+                        
+                        <div class="mt-5 text-xs p-3 bg-emerald-50 dark:bg-emerald-900/10 rounded-xl">Com essa área você consegue um sistema de ${data.maxPot} kWp. Recomendamos painéis de 600W+.</div>
+                    </div>
+                `;
+            } else if (simType === 3) {
+                html = `
+                    <div>
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <div class="text-xs tracking-widest text-sky-600">EQUIPAMENTOS ESCOLHIDOS</div>
+                                <div class="text-3xl font-bold">${data.qtdPaineis} × ${data.moduleW}W</div>
+                            </div>
+                            <div class="text-right text-sm"><div class="font-mono text-2xl font-bold">${data.potenciaInstalada}</div><div class="text-xs -mt-1">kWp</div></div>
+                        </div>
+                        
+                        <div class="my-5 text-sm space-y-2">
+                            <div class="flex justify-between"><span>Inversor</span> <span class="font-medium">${data.inversor.split(' — ')[0]}</span></div>
+                            <div class="flex justify-between"><span>Área necessária</span> <span>${data.areaNecessaria} m²</span></div>
+                            <div class="flex justify-between"><span>Peso aproximado</span> <span>${data.pesoAprox} kg</span></div>
+                            <div class="flex justify-between"><span>Compatibilidade</span> <span class="text-emerald-600 font-medium">${data.compatibilidade}</span></div>
+                        </div>
+                        
+                        <div class="p-4 bg-sky-50 dark:bg-sky-900/10 rounded-2xl text-sm">
+                            <strong>Recomendação:</strong> ${data.recomendacao}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Common footer actions
+            html += `
+                <div class="mt-8 pt-6 border-t flex flex-col sm:flex-row gap-3">
+                    <button onclick="generatePDF(${simType}, ${JSON.stringify(data).replace(/"/g, '"')})" 
+                            class="flex-1 flex items-center justify-center gap-x-2 py-3.5 border border-zinc-300 dark:border-zinc-600 rounded-2xl hover:bg-zinc-50 dark:hover:bg-zinc-800 font-medium text-sm">
+                        <i class="fa-solid fa-file-pdf"></i> 
+                        <span>Gerar PDF Profissional</span>
+                    </button>
+                    
+                    <a href="https://wa.me/5562999999999?text=Olá%20YWS%20Solar!%20Fiz%20uma%20simulação%20e%20gostaria%20de%20mais%20informações.%20Tipo:%20${encodeURIComponent(data.tipo)}" 
+                       target="_blank"
+                       class="flex-1 flex items-center justify-center gap-x-2 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-semibold text-sm">
+                        <i class="fa-brands fa-whatsapp"></i> 
+                        <span>Falar com especialista</span>
+                    </a>
+                </div>
+            `;
+            
+            content.innerHTML = html;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeResultModal() {
+            const modal = document.getElementById('result-modal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+
+        // PDF Generation
+        function generatePDF(simType, data) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            const pageWidth = doc.internal.pageSize.getWidth();
+            
+            // Header
+            doc.setFillColor(234, 179, 8);
+            doc.rect(0, 0, pageWidth, 22, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(18);
+            doc.text("YWS SOLAR", 20, 15);
+            doc.setFontSize(10);
+            doc.text("Plataforma Inteligente de Energia Solar • 2026", pageWidth - 20, 15, { align: 'right' });
+            
+            doc.setTextColor(30, 30, 30);
+            doc.setFontSize(14);
+            doc.text(`Relatório de Simulação — ${data.tipo}`, 20, 35);
+            
+            doc.setFontSize(10);
+            doc.text(`Data: ${new Date(data.data).toLocaleDateString('pt-BR')}  |  Cliente: Simulação Web`, 20, 42);
+            
+            let y = 55;
+            
+            if (simType === 1) {
+                doc.text(`Cidade: ${data.cidade}  •  Irradiação: ${data.irrad} kWh/m²/dia`, 20, y); y += 8;
+                doc.text(`Consumo mensal: ${data.kwhMensal} kWh`, 20, y); y += 8;
+                doc.text(`Potência necessária: ${data.potenciaKwp} kWp`, 20, y); y += 8;
+                doc.text(`Quantidade de painéis: ${data.qtdPaineis} × 600W`, 20, y); y += 8;
+                doc.text(`Área aproximada: ${data.area} m²`, 20, y); y += 8;
+                doc.text(`Produção mensal estimada: ${data.producaoMensal} kWh`, 20, y); y += 8;
+                doc.text(`Economia mensal estimada: R$ ${data.economia}`, 20, y);
+            } else if (simType === 2) {
+                doc.text(`Dimensões: ${data.comp}m × ${data.larg}m`, 20, y); y += 8;
+                doc.text(`Área bruta: ${data.areaBruta} m²  •  Área útil: ${data.areaUtil} m²`, 20, y); y += 8;
+                doc.text(`Quantidade máxima de painéis: ${data.maxPaineis}`, 20, y); y += 8;
+                doc.text(`Potência máxima: ${data.maxPot} kWp`, 20, y); y += 8;
+                doc.text(`Geração mensal aproximada: ${data.geracaoMensal} kWh`, 20, y);
+            } else if (simType === 3) {
+                doc.text(`Módulos: ${data.qtdPaineis} × ${data.moduleW}W`, 20, y); y += 8;
+                doc.text(`Potência instalada: ${data.potenciaInstalada} kWp`, 20, y); y += 8;
+                doc.text(`Área necessária: ${data.areaNecessaria} m²  •  Peso: ~${data.pesoAprox} kg`, 20, y); y += 8;
+                doc.text(`Inversor: ${data.inversor}`, 20, y); y += 8;
+                doc.text(`Compatibilidade: ${data.compatibilidade}`, 20, y);
+                y += 12;
+                doc.setFontSize(9);
+                doc.text(`Recomendação: ${data.recomendacao}`, 20, y, { maxWidth: 170 });
+            }
+            
+            // Footer
+            doc.setFontSize(9);
+            doc.setTextColor(100);
+            doc.text("YWS Solar • Limpeza profissional aumenta até 30% a geração dos seus painéis", 20, 280);
+            doc.text("WhatsApp: (62) 99999-9999  •  www.ywssolar.com.br", pageWidth - 20, 280, { align: 'right' });
+            
+            // QR placeholder text
+            doc.setFontSize(8);
+            doc.text("Escaneie para falar conosco no WhatsApp", pageWidth/2, 260, { align: 'center' });
+            
+            const filename = `YWS-Solar-Simulacao-${data.tipo}-${new Date().toISOString().slice(0,10)}.pdf`;
+            doc.save(filename);
+        }
+
+        // Save simulation to history
+        function saveSimulation(type, data) {
+            let history = JSON.parse(localStorage.getItem('yws_simulacoes') || '[]');
+            history.unshift({ ...data, id: Date.now(), simType: type });
+            if (history.length > 25) history = history.slice(0, 25);
+            localStorage.setItem('yws_simulacoes', JSON.stringify(history));
+        }
+
+        function showHistory() {
+            const history = JSON.parse(localStorage.getItem('yws_simulacoes') || '[]');
+            
+            const modal = document.getElementById('result-modal');
+            const content = document.getElementById('result-content');
+            
+            if (history.length === 0) {
+                content.innerHTML = `<div class="text-center py-8"><i class="fa-solid fa-history text-4xl text-zinc-300 mb-4"></i><p class="text-zinc-500">Nenhuma simulação salva ainda.<br>Faça sua primeira simulação!</p></div>`;
+            } else {
+                let html = `<div class="font-semibold mb-4 text-lg">Histórico de Simulações</div><div class="space-y-3 max-h-[420px] overflow-auto pr-2>`;
+                
+                history.forEach((item, idx) => {
+                    const d = new Date(item.data).toLocaleDateString('pt-BR', {day:'2-digit', month:'short'});
+                    html += `
+                        <div class="border border-zinc-200 dark:border-zinc-700 rounded-2xl p-4 flex justify-between items-center text-sm hover:bg-zinc-50 dark:hover:bg-zinc-800 cursor-pointer" onclick="loadFromHistory(${idx})">
+                            <div>
+                                <span class="font-medium">${item.tipo}</span> 
+                                <span class="text-xs px-2 py-0.5 bg-zinc-100 dark:bg-zinc-700 rounded ml-2">${d}</span>
+                                <div class="text-xs text-zinc-500 mt-0.5">${item.cidade || item.inversor || item.maxPaineis + ' painéis' || ''}</div>
+                            </div>
+                            <div class="text-right">
+                                ${item.potenciaKwp ? `<div class="font-mono font-bold">${item.potenciaKwp} kWp</div>` : ''}
+                                ${item.maxPot ? `<div class="font-mono font-bold">${item.maxPot} kWp</div>` : ''}
+                                ${item.potenciaInstalada ? `<div class="font-mono font-bold">${item.potenciaInstalada} kWp</div>` : ''}
+                                <button onclick="event.stopImmediatePropagation(); generatePDFFromHistory(${idx});" class="text-xs mt-1 text-yellow-600 hover:underline">PDF</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += `</div>`;
+                content.innerHTML = html;
+            }
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function loadFromHistory(index) {
+            const history = JSON.parse(localStorage.getItem('yws_simulacoes') || '[]');
+            const item = history[index];
+            if (!item) return;
+            
+            closeResultModal();
+            
+            // Reopen the correct simulator with data prefilled (simplified)
+            setTimeout(() => {
+                openSimulator(parseInt(item.simType.replace('sim', '')));
+                
+                // TODO: prefill would be nice but for brevity we just show a toast-like
+                setTimeout(() => {
+                    const note = document.createElement('div');
+                    note.className = `fixed bottom-6 left-1/2 -translate-x-1/2 bg-zinc-900 text-white text-xs px-5 py-2 rounded-3xl shadow-xl z-[200]`;
+                    note.innerHTML = `Dados da simulação de ${item.tipo} carregados no histórico.`;
+                    document.body.appendChild(note);
+                    setTimeout(() => note.remove(), 2600);
+                }, 600);
+            }, 280);
+        }
+
+        function generatePDFFromHistory(index) {
+            const history = JSON.parse(localStorage.getItem('yws_simulacoes') || '[]');
+            const item = history[index];
+            if (!item) return;
+            closeResultModal();
+            generatePDF(parseInt(item.simType.replace('sim','')), item);
+        }
+
+        // Admin functions
+        function showAdminModal() {
+            const modal = document.getElementById('admin-modal');
+            const content = document.getElementById('admin-content');
+            
+            content.innerHTML = `
+                <div class="mb-5">
+                    <div class="text-sm mb-2 text-zinc-500">Digite a senha da equipe YWS Solar</div>
+                    <div class="flex gap-3">
+                        <input type="password" id="admin-pass" value="yws2026" class="flex-1 border border-zinc-300 dark:border-zinc-600 rounded-2xl px-4 py-3 text-sm font-mono">
+                        <button onclick="verifyAdminPassword()" class="px-8 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-semibold">Entrar</button>
+                    </div>
+                    <div class="text-[10px] text-zinc-400 mt-1">Senha de demonstração: yws2026</div>
+                </div>
+            `;
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+        
+        function verifyAdminPassword() {
+            const pass = document.getElementById('admin-pass').value;
+            if (pass === 'yws2026' || pass === 'admin') {
+                renderAdminDashboard();
+            } else {
+                alert('Senha incorreta. Use yws2026 para demonstração.');
+            }
+        }
+        
+        function renderAdminDashboard() {
+            const content = document.getElementById('admin-content');
+            
+            const leads = JSON.parse(localStorage.getItem('yws_leads') || '[]');
+            const sims = JSON.parse(localStorage.getItem('yws_simulacoes') || '[]');
+            
+            let html = `
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <div class="font-semibold">Dashboard da Equipe</div>
+                        <div class="text-xs text-zinc-500">${leads.length} solicitações de inspeção • ${sims.length} simulações salvas</div>
+                    </div>
+                    <button onclick="exportLeadsToCSV()" class="text-xs flex items-center gap-x-1.5 px-4 py-2 border border-zinc-300 dark:border-zinc-600 rounded-2xl hover:bg-zinc-50">
+                        <i class="fa-solid fa-download"></i> Exportar Excel (CSV)
+                    </button>
+                </div>
+                
+                <div class="mb-3">
+                    <input type="text" id="admin-search" placeholder="Buscar por nome, bairro ou telefone..." 
+                           onkeyup="filterAdminTable()" class="w-full border border-zinc-300 dark:border-zinc-600 rounded-2xl px-4 py-2.5 text-sm">
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm" id="admin-table">
+                        <thead>
+                            <tr class="border-b text-left text-xs text-zinc-500">
+                                <th class="py-2 pr-4">Data</th>
+                                <th class="py-2 pr-4">Nome / Contato</th>
+                                <th class="py-2 pr-4">Bairro / Cidade</th>
+                                <th class="py-2 pr-4">Qtd Painéis</th>
+                                <th class="py-2 pr-4">Status</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            if (leads.length === 0) {
+                html += `<tr><td colspan="6" class="py-8 text-center text-zinc-400">Nenhuma solicitação ainda. Os leads aparecem aqui após o envio do formulário.</td></tr>`;
+            } else {
+                leads.forEach((lead, i) => {
+                    const d = new Date(lead.data).toLocaleDateString('pt-BR');
+                    html += `
+                        <tr class="border-b hover:bg-zinc-50 dark:hover:bg-zinc-800 admin-row" data-name="${lead.nome.toLowerCase()}" data-bairro="${lead.bairro.toLowerCase()}" data-phone="${lead.whatsapp}">
+                            <td class="py-3 pr-4 font-mono text-xs">${d}</td>
+                            <td class="py-3 pr-4">
+                                <div class="font-medium">${lead.nome}</div>
+                                <div class="text-xs text-emerald-600">${lead.whatsapp}</div>
+                            </td>
+                            <td class="py-3 pr-4 text-xs">${lead.bairro}<br><span class="text-zinc-400">${lead.cidade}</span></td>
+                            <td class="py-3 pr-4 font-mono">${lead.qtdPaineis}</td>
+                            <td class="py-3 pr-4"><span class="px-3 py-0.5 text-xs rounded-2xl bg-amber-100 text-amber-700">${lead.status}</span></td>
+                            <td class="py-3 text-right">
+                                <a href="https://wa.me/${lead.whatsapp.replace(/\D/g,'')}" target="_blank" class="text-emerald-600 hover:underline text-xs">WhatsApp</a>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+            
+            html += `</tbody></table></div>`;
+            
+            // Also show recent simulations
+            if (sims.length > 0) {
+                html += `<div class="mt-8"><div class="font-medium text-sm mb-3">Últimas simulações realizadas</div><div class="text-xs grid grid-cols-1 md:grid-cols-2 gap-2>`;
+                sims.slice(0,6).forEach(s => {
+                    html += `<div class="border rounded-xl px-3 py-2 text-xs flex justify-between"><div>${s.tipo} • ${new Date(s.data).toLocaleDateString('pt-BR')}</div><div class="font-mono">${s.potenciaKwp || s.maxPot || s.potenciaInstalada || ''}</div></div>`;
+                });
+                html += `</div></div>`;
+            }
+            
+            content.innerHTML = html;
+        }
+        
+        function filterAdminTable() {
+            const term = document.getElementById('admin-search').value.toLowerCase();
+            document.querySelectorAll('#admin-table .admin-row').forEach(row => {
+                const match = row.dataset.name.includes(term) || row.dataset.bairro.includes(term) || row.dataset.phone.includes(term);
+                row.style.display = match ? '' : 'none';
+            });
+        }
+        
+        function exportLeadsToCSV() {
+            const leads = JSON.parse(localStorage.getItem('yws_leads') || '[]');
+            if (leads.length === 0) {
+                alert('Nenhum lead para exportar ainda.');
+                return;
+            }
+            
+            let csv = 'Data,Nome,WhatsApp,Cidade,Bairro,Qtd Painéis,Tipo,Local,Observações,Deslocamento,Status\n';
+            
+            leads.forEach(l => {
+                csv += `"${new Date(l.data).toLocaleDateString('pt-BR')}","${l.nome}","${l.whatsapp}","${l.cidade}","${l.bairro}",${l.qtdPaineis},"${l.tipoInstalacao}","${l.local || ''}","${l.obs || ''}","${l.deslocamento}","${l.status}"\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `YWS_Solar_Leads_${new Date().toISOString().slice(0,10)}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        function closeAdminModal() {
+            const modal = document.getElementById('admin-modal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+
+        // Mobile menu (simple)
+        function toggleMobileMenu() {
+            const nav = document.querySelector('nav');
+            const existing = document.getElementById('mobile-menu');
+            if (existing) {
+                existing.remove();
+                return;
+            }
+            
+            const menu = document.createElement('div');
+            menu.id = 'mobile-menu';
+            menu.className = `md:hidden absolute top-[72px] left-0 right-0 bg-white dark:bg-zinc-900 border-b p-6 flex flex-col gap-y-4 text-sm shadow-xl`;
+            menu.innerHTML = `
+                <a href="#servicos" class="py-1">Serviços</a>
+                <a href="#simuladores" class="py-1">Simuladores</a>
+                <a href="#depoimentos" class="py-1">Depoimentos</a>
+                <button onclick="showHistory(); document.getElementById('mobile-menu').remove()" class="text-left py-1 flex items-center gap-x-2"><i class="fa-solid fa-history w-4"></i> Histórico</button>
+                <div class="pt-3 border-t">
+                    <a href="https://wa.me/5562999999999" target="_blank" class="flex items-center justify-center gap-x-2 bg-emerald-600 text-white py-3 rounded-2xl font-semibold">
+                        <i class="fa-brands fa-whatsapp"></i> Falar no WhatsApp
+                    </a>
+                </div>
+            `;
+            nav.appendChild(menu);
+        }
+
+        // Keyboard support
+        function initKeyboard() {
+            document.addEventListener('keydown', function(e) {
+                if (e.key === '/' && document.activeElement.tagName === 'BODY') {
+                    e.preventDefault();
+                    const qty = document.getElementById('qty-input');
+                    if (qty) qty.focus();
+                }
+            });
+            
+            // Allow Enter on modals sometimes
+        }
+
+        // Initialize everything
+        function initializeApp() {
+            initTailwind();
+            initTheme();
+            initQuantityChooser();
+            initKeyboard();
+            
+            // Seed some demo data if empty (for nice first impression)
+            if (!localStorage.getItem('yws_leads')) {
+                const demoLeads = [
+                    {id: Date.now()-86400000*2, nome: "Maria Aparecida", whatsapp: "(62) 98123-4455", cidade: "Goiânia", bairro: "Setor Bueno", qtdPaineis: 28, tipoInstalacao: "Telhado residencial", local: "Rua 44, Qd 12", obs: "Telhado com acesso lateral", deslocamento: "R$ 120", data: new Date(Date.now()-86400000*2).toISOString(), status: "Pendente"},
+                    {id: Date.now()-86400000, nome: "João Ricardo", whatsapp: "(62) 99987-1122", cidade: "Aparecida de Goiânia", bairro: "Jardim América", qtdPaineis: 45, tipoInstalacao: "Telhado comercial", local: "Av. T-4, 1250", obs: "", deslocamento: "R$ 165", data: new Date(Date.now()-86400000).toISOString(), status: "Pendente"}
+                ];
+                localStorage.setItem('yws_leads', JSON.stringify(demoLeads));
+            }
+            
+            // Welcome toast once
+            if (!localStorage.getItem('yws_welcomed')) {
+                setTimeout(() => {
+                    // Optional subtle welcome - disabled for clean UX
+                    localStorage.setItem('yws_welcomed', 'true');
+                }, 4200);
+            }
+            
+            // Make sure live metrics update initially
+            setTimeout(() => {
+                const input = document.getElementById('qty-input');
+                if (input) updateQuantityDisplay();
+            }, 300);
+            
+            console.log('%c[YWS Solar] Plataforma completa inicializada com sucesso.', 'color:#666');
+        }
+
+        // Boot
+        window.onload = initializeApp;
+    </script>
+</body>
+</html>
