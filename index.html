@@ -139,13 +139,6 @@
                         <span>Fale agora</span>
                     </a>
 
-                    <!-- Admin Button -->
-                    <button onclick="showAdminModal()" 
-                            class="flex items-center gap-x-2 px-4 py-2 text-sm font-medium rounded-2xl border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
-                        <i class="fa-solid fa-user-shield"></i>
-                        <span class="hidden lg:inline">Equipe</span>
-                    </button>
-
                     <!-- Mobile Menu -->
                     <button class="md:hidden w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-800" onclick="toggleMobileMenu()">
                         <i class="fa-solid fa-bars text-xl"></i>
@@ -1382,10 +1375,9 @@
                 <div class="mb-5">
                     <div class="text-sm mb-2 text-zinc-500">Digite a senha da equipe YWS Solar</div>
                     <div class="flex gap-3">
-                        <input type="password" id="admin-pass" value="yws2026" class="flex-1 border border-zinc-300 dark:border-zinc-600 rounded-2xl px-4 py-3 text-sm font-mono">
+                        <input type="password" id="admin-pass" class="flex-1 border border-zinc-300 dark:border-zinc-600 rounded-2xl px-4 py-3 text-sm font-mono" placeholder="••••••••">
                         <button onclick="verifyAdminPassword()" class="px-8 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-semibold">Entrar</button>
                     </div>
-                    <div class="text-[10px] text-zinc-400 mt-1">Senha de demonstração: yws2026</div>
                 </div>
             `;
             
@@ -1395,10 +1387,10 @@
         
         function verifyAdminPassword() {
             const pass = document.getElementById('admin-pass').value;
-            if (pass === 'yws2026' || pass === 'admin') {
+            if (pass === 'yws2026') {
                 renderAdminDashboard();
             } else {
-                alert('Senha incorreta. Use yws2026 para demonstração.');
+                alert('Senha incorreta.');
             }
         }
         
@@ -1512,6 +1504,23 @@
             modal.classList.add('hidden');
         }
 
+        // Acesso administrativo secreto (só aparece se URL tiver #admin ou ?admin)
+        function showFloatingAdminButton() {
+            const existing = document.getElementById('floating-admin-btn');
+            if (existing) existing.remove();
+
+            const btn = document.createElement('button');
+            btn.id = 'floating-admin-btn';
+            btn.className = `fixed bottom-6 right-6 z-[130] flex items-center gap-x-2.5 px-5 py-3.5 bg-zinc-900 hover:bg-black dark:bg-white dark:hover:bg-zinc-100 text-white dark:text-zinc-900 rounded-3xl shadow-2xl text-sm font-semibold transition-all active:scale-[0.985]`;
+            btn.innerHTML = `
+                <i class="fa-solid fa-user-shield text-lg"></i>
+                <span class="hidden sm:inline">Admin YWS</span>
+            `;
+            btn.title = "Acesso restrito à equipe";
+            btn.onclick = () => showAdminModal();
+            document.body.appendChild(btn);
+        }
+
         // Mobile menu (simple)
         function toggleMobileMenu() {
             const nav = document.querySelector('nav');
@@ -1557,6 +1566,13 @@
             initTheme();
             initQuantityChooser();
             initKeyboard();
+            
+            // Acesso secreto à área administrativa da equipe YWS Solar
+            // Como usar: acesse o site e adicione #admin ou ?admin no final da URL
+            // Exemplo: https://seusite.com/#admin
+            if (window.location.hash === '#admin' || new URLSearchParams(window.location.search).has('admin')) {
+                showFloatingAdminButton();
+            }
             
             // Seed some demo data if empty (for nice first impression)
             if (!localStorage.getItem('yws_leads')) {
