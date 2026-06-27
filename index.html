@@ -1110,6 +1110,39 @@
             modal.classList.add('flex');
         }
 
+        // Helper to build rich WhatsApp message based on simulation
+        function buildWhatsAppMessage(simType, data) {
+            let msg = `Olá YWS Solar! Fiz uma simulação e gostaria de mais informações.\n\n`;
+
+            if (simType === 1) {
+                msg += `📊 Simulação de Consumo\n`;
+                msg += `• Cidade: ${data.cidade}\n`;
+                msg += `• Consumo mensal: ${data.kwhMensal} kWh\n`;
+                msg += `• Potência recomendada: ${data.potenciaKwp} kWp\n`;
+                msg += `• Quantidade de painéis: ${data.qtdPaineis} × 600W\n`;
+                msg += `• Economia estimada: R$ ${data.economia}/mês\n`;
+                msg += `• Área aproximada: ${data.area} m²`;
+            } 
+            else if (simType === 2) {
+                msg += `📐 Simulação de Área Disponível\n`;
+                msg += `• Dimensões: ${data.comp}m × ${data.larg}m\n`;
+                msg += `• Área útil: ${data.areaUtil} m²\n`;
+                msg += `• Quantidade máxima de painéis: ${data.maxPaineis}\n`;
+                msg += `• Potência máxima: ${data.maxPot} kWp\n`;
+                msg += `• Geração mensal estimada: ${data.geracaoMensal} kWh`;
+            } 
+            else if (simType === 3) {
+                msg += `⚙️ Escolha de Equipamentos\n`;
+                msg += `• Módulos: ${data.qtdPaineis} × ${data.moduleW}W\n`;
+                msg += `• Potência instalada: ${data.potenciaInstalada} kWp\n`;
+                msg += `• Inversor: ${data.inversor.split(' — ')[0]}\n`;
+                msg += `• Área necessária: ${data.areaNecessaria} m²`;
+            }
+
+            msg += `\n\nPodem me ajudar com mais detalhes e orçamento?`;
+            return msg;
+        }
+
         // Show Result Modal with PDF + WhatsApp
         function showResultModal(data, simType) {
             const modal = document.getElementById('result-modal');
@@ -1206,7 +1239,7 @@
                         <span>Gerar PDF Profissional</span>
                     </button>
                     
-                    <a href="https://wa.me/5562991758807?text=Olá%20YWS%20Solar!%20Fiz%20uma%20simulação%20e%20gostaria%20de%20mais%20informações.%20Tipo:%20${encodeURIComponent(data.tipo)}" 
+                    <a href="https://wa.me/5562991758807?text=${encodeURIComponent(buildWhatsAppMessage(simType, data))}" 
                        target="_blank"
                        class="flex-1 flex items-center justify-center gap-x-2 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-semibold text-sm">
                         <i class="fa-brands fa-whatsapp"></i> 
