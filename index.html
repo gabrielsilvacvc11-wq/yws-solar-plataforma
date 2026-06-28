@@ -935,12 +935,15 @@
             const tipo = document.querySelector('input[name="tipo-imovel"]:checked').value;
             
             let kwhMensal;
+            const contaContainer = document.getElementById('input-conta');
+            const kwhContainer = document.getElementById('input-kwh');
             const contaInput = document.getElementById('sim1-conta');
             const kwhInput = document.getElementById('sim1-kwh');
-            
-            if (!contaInput.classList.contains('hidden') && contaInput.offsetParent !== null) {
+
+            // More reliable check: which container is currently visible
+            if (!contaContainer.classList.contains('hidden')) {
                 const conta = parseFloat(contaInput.value) || 350;
-                kwhMensal = Math.round(conta / 0.95); // tarifa média
+                kwhMensal = Math.round(conta / 0.95); // tarifa média R$ 0,95/kWh
             } else {
                 kwhMensal = parseFloat(kwhInput.value) || 400;
             }
