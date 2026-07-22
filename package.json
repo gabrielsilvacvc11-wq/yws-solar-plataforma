@@ -1,0 +1,31 @@
+{
+  "name": "yws-solar-plataforma",
+  "version": "1.0.0",
+  "description": "Site oficial da YWS Solar com design moderno, 4 simuladores interativos (Consumo, Área, Equipamentos, Inspeção/Limpeza), histórico local, geração de PDF profissional, área administrativa para a equipe, recomendações inteligentes e integração WhatsApp.",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx serve .",
+    "build": "echo 'Static site - no build step required'",
+    "test": "echo 'No tests configured'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gabrielsilvacvc11-wq/yws-solar-plataforma.git"
+  },
+  "keywords": [
+    "solar",
+    "energia-solar",
+    "yws-solar",
+    "simulador",
+    "fotovoltaica"
+  ],
+  "author": "YWS Solar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gabrielsilvacvc11-wq/yws-solar-plataforma/issues"
+  },
+  "homepage": "https://github.com/gabrielsilvacvc11-wq/yws-solar-plataforma#readme",
+  "dependencies": {
+    "@vercel/speed-insights": "^2.0.0"
+  }
+}
