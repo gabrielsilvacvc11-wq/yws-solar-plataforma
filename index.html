@@ -1,28 +1,221 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>YWS Solar • Plataforma Inteligente</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YWS Solar • Plataforma Inteligente | Simuladores, Economia e Limpeza de Painéis</title>
+    <meta name="description" content="Site oficial da YWS Solar. Simule seu sistema de energia solar fotovoltaica, calcule economia, área disponível, escolha equipamentos e agende inspeção/limpeza profissional. Aumente até 30% a geração dos seus painéis.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@500;600&display=swap');
+        :root { --primary: #eab308; --secondary: #16a34a; }
+        .dark { --primary: #facc15; --secondary: #4ade80; }
+        body { font-family: 'Inter', system_ui, sans-serif; }
+        .font-display { font-family: 'Poppins', 'Inter', sans-serif; }
+        .section-header { font-size: 2.25rem; line-height: 2.5rem; font-weight: 700; letter-spacing: -0.025em; }
+        .solar-gradient { background: linear-gradient(135deg, #eab308 0%, #16a34a 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .card { transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0.0, 0.2, 1); }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); }
+        .nav-active { color: #eab308; font-weight: 600; }
+        .result-card { animation: fadeInUp 0.4s ease forwards; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .metric-value { font-variant-numeric: tabular-nums; }
+        .progress-bar { transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .stat-number { font-variant-numeric: tabular-nums; }
+    </style>
 </head>
-<body class="bg-zinc-50 text-zinc-900 min-h-screen flex items-center justify-center p-6">
-  <div class="max-w-md w-full text-center bg-white rounded-3xl shadow-xl p-10 border border-zinc-200">
-    <div class="w-16 h-16 bg-gradient-to-br from-yellow-400 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
-      <i class="fa-solid fa-sun text-white text-3xl"></i>
+<body class="bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
+    <nav class="bg-white/95 dark:bg-zinc-900/95 backdrop-blur-lg border-b border-zinc-200 dark:border-zinc-800 sticky top-0 z-50">
+        <div class="max-w-screen-2xl mx-auto">
+            <div class="px-4 sm:px-8 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-x-3">
+                    <div class="flex items-center gap-x-2.5">
+                        <div class="w-11 h-11 bg-gradient-to-br from-yellow-400 to-emerald-600 rounded-2xl flex items-center justify-center shadow-inner">
+                            <i class="fa-solid fa-sun text-white text-3xl"></i>
+                        </div>
+                        <div>
+                            <span class="font-display text-3xl font-bold tracking-tighter">YWS</span>
+                            <span class="font-display text-3xl font-semibold text-emerald-600 dark:text-emerald-400">Solar</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center gap-x-8 text-sm font-medium">
+                    <a href="#inicio" class="hover:text-yellow-500 transition-colors">Início</a>
+                    <a href="#servicos" class="hover:text-yellow-500 transition-colors">Serviços</a>
+                    <a href="#simuladores" class="hover:text-yellow-500 transition-colors">Simuladores</a>
+                    <a href="#depoimentos" class="hover:text-yellow-500 transition-colors">Depoimentos</a>
+                    <button onclick="showHistory()" class="flex items-center gap-x-2 px-4 py-2 rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors text-sm">
+                        <i class="fa-solid fa-history"></i><span>Histórico</span>
+                    </button>
+                </div>
+                <div class="flex items-center gap-x-3">
+                    <button onclick="toggleDarkMode()" class="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors" title="Alternar tema">
+                        <i class="fa-solid fa-moon text-xl dark:hidden"></i>
+                        <i class="fa-solid fa-sun text-xl hidden dark:block text-yellow-400"></i>
+                    </button>
+                    <a href="https://wa.me/5562991758807?text=Olá%20YWS%20Solar!%20Quero%20falar%20com%20um%20especialista." target="_blank" class="hidden sm:flex items-center gap-x-2.5 bg-emerald-600 hover:bg-emerald-700 transition-all text-white px-5 py-2.5 rounded-3xl text-sm font-semibold shadow-lg shadow-emerald-600/30">
+                        <i class="fa-brands fa-whatsapp text-xl"></i><span>Fale agora</span>
+                    </a>
+                    <button class="md:hidden w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-800" onclick="toggleMobileMenu()">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section id="inicio" class="max-w-screen-2xl mx-auto px-4 sm:px-8 pt-12 sm:pt-16 pb-16 sm:pb-20">
+        <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            <div class="lg:col-span-7">
+                <div class="inline-flex items-center gap-x-2 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 px-3 sm:px-4 py-1 sm:py-1.5 rounded-3xl text-xs sm:text-sm font-semibold mb-5 sm:mb-6">
+                    <div class="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                    <span>GOIÁS • BRASIL • 2026</span>
+                </div>
+                <h1 class="font-display font-bold tracking-tighter leading-none mb-5 sm:mb-6 text-[clamp(2.35rem,6.5vw,3.25rem)] sm:text-[clamp(2.75rem,5.5vw,3.75rem)] lg:text-7xl">
+                    Energia solar<br><span class="solar-gradient">inteligente</span><br>para o seu futuro.
+                </h1>
+                <p class="max-w-lg text-[15px] sm:text-lg lg:text-xl text-zinc-600 dark:text-zinc-400 mb-6 sm:mb-8">
+                    Simule seu sistema em segundos. Descubra quanto você pode economizar e aumente até <span class="font-semibold text-emerald-600">30% a geração</span> com limpeza profissional.
+                </p>
+                <div class="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4">
+                    <button onclick="document.getElementById('simuladores').scrollIntoView({ behavior: 'smooth' })" class="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-3xl font-semibold flex items-center justify-center gap-x-3 hover:scale-[1.02] active:scale-[0.985] transition-all shadow-xl text-sm sm:text-base">
+                        <span>Fazer simulação gratuita</span><i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                    <a href="https://wa.me/5562991758807?text=Olá%20YWS%20Solar,%20quero%20falar%20com%20um%20especialista%20sobre%20energia%20solar." target="_blank" class="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 border border-zinc-300 dark:border-zinc-700 hover:bg-white dark:hover:bg-zinc-900 rounded-3xl font-semibold flex items-center justify-center gap-x-3 transition-all text-sm sm:text-base">
+                        <i class="fa-brands fa-whatsapp text-emerald-600"></i><span>Falar com especialista</span>
+                    </a>
+                </div>
+            </div>
+            <div class="lg:col-span-5 relative mt-8 lg:mt-0">
+                <div class="aspect-[4/3] bg-gradient-to-br from-yellow-400/10 to-emerald-600/10 rounded-3xl p-1 shadow-2xl">
+                    <div class="bg-white dark:bg-zinc-900 rounded-[20px] h-full p-5 sm:p-8 flex flex-col justify-between relative overflow-hidden">
+                        <div>
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <div class="text-emerald-600 dark:text-emerald-400 text-xs sm:text-sm font-semibold tracking-widest">SISTEMA RESIDENCIAL</div>
+                                    <div class="text-[2.1rem] sm:text-5xl font-bold tabular-nums mt-0.5 sm:mt-1">18,6 <span class="text-2xl sm:text-3xl font-normal">kWp</span></div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-[10px] sm:text-xs text-zinc-500">ECONOMIA MENSAL</div>
+                                    <div class="text-2xl sm:text-3xl font-bold text-emerald-600">R$ 1.284</div>
+                                </div>
+                            </div>
+                            <div class="mt-6 sm:mt-8 grid grid-cols-3 gap-3 sm:gap-4 text-center">
+                                <div class="bg-zinc-100 dark:bg-zinc-800 rounded-2xl p-4"><div class="text-xs text-zinc-500">PAINÉIS</div><div class="font-bold text-2xl">31</div><div class="text-[10px] text-emerald-600">600W</div></div>
+                                <div class="bg-zinc-100 dark:bg-zinc-800 rounded-2xl p-4"><div class="text-xs text-zinc-500">ÁREA</div><div class="font-bold text-2xl">62 m²</div></div>
+                                <div class="bg-zinc-100 dark:bg-zinc-800 rounded-2xl p-4"><div class="text-xs text-zinc-500">PAYBACK</div><div class="font-bold text-2xl">3,8 <span class="text-base font-normal">anos</span></div></div>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between text-xs pt-4 border-t border-zinc-200 dark:border-zinc-700">
+                            <div class="flex items-center gap-x-2 text-emerald-600"><i class="fa-solid fa-check-circle"></i><span class="font-medium">Sistema otimizado</span></div>
+                            <div class="text-zinc-400">Goiânia, GO</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="servicos" class="max-w-screen-2xl mx-auto px-8 py-16 border-t border-zinc-200 dark:border-zinc-800">
+        <div class="flex justify-between items-end mb-10">
+            <div>
+                <span class="text-emerald-600 font-semibold text-sm tracking-[2px]">O QUE OFERECEMOS</span>
+                <h2 class="section-header tracking-tighter">Soluções completas<br>em energia solar</h2>
+            </div>
+        </div>
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="card bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-7 group">
+                <div class="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"><i class="fa-solid fa-calculator text-3xl"></i></div>
+                <h3 class="font-semibold text-xl mb-3">Dimensionamento Inteligente</h3>
+                <p class="text-zinc-600 dark:text-zinc-400 text-[15px]">Simuladores precisos de consumo, área disponível e escolha de equipamentos com recomendações automáticas.</p>
+            </div>
+            <div class="card bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-7 group">
+                <div class="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"><i class="fa-solid fa-tools text-3xl"></i></div>
+                <h3 class="font-semibold text-xl mb-3">Instalação Profissional</h3>
+                <p class="text-zinc-600 dark:text-zinc-400 text-[15px]">Projetos personalizados, equipamentos de alta eficiência (570W a 630W) e instalação com garantia.</p>
+            </div>
+            <div class="card bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-7 group">
+                <div class="w-12 h-12 bg-sky-100 dark:bg-sky-900/30 text-sky-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"><i class="fa-solid fa-hand-sparkles text-3xl"></i></div>
+                <h3 class="font-semibold text-xl mb-3">Limpeza & Manutenção</h3>
+                <p class="text-zinc-600 dark:text-zinc-400 text-[15px]"><strong class="text-emerald-600">+30% de geração</strong> com nossa limpeza profissional.</p>
+            </div>
+            <div class="card bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-7 group">
+                <div class="w-12 h-12 bg-violet-100 dark:bg-violet-900/30 text-violet-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"><i class="fa-solid fa-chart-line text-3xl"></i></div>
+                <h3 class="font-semibold text-xl mb-3">Monitoramento & Suporte</h3>
+                <p class="text-zinc-600 dark:text-zinc-400 text-[15px]">Acompanhamento da performance e suporte rápido via WhatsApp.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="simuladores" class="max-w-screen-2xl mx-auto px-8 py-16 bg-zinc-100 dark:bg-zinc-900/70 border-t border-zinc-200 dark:border-zinc-800">
+        <div class="max-w-2xl mb-12">
+            <span class="text-emerald-600 font-semibold text-sm tracking-[2px]">FERRAMENTAS GRATUITAS</span>
+            <h2 class="section-header tracking-tighter mt-2">Simule seu sistema<br>em menos de 2 minutos</h2>
+        </div>
+        <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
+            <div onclick="alert('Simulador de Consumo - Em restauração completa. Use o WhatsApp para atendimento imediato.')" class="card cursor-pointer bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-3xl p-7 hover:border-yellow-400 group">
+                <div class="w-11 h-11 bg-yellow-100 dark:bg-yellow-900/40 text-yellow-600 rounded-2xl flex items-center justify-center"><i class="fa-solid fa-bolt-lightning text-3xl"></i></div>
+                <h3 class="font-semibold text-2xl mt-6 mb-1 tracking-tight">Consumo de Energia</h3>
+                <p class="text-sm text-zinc-500">Informe sua conta ou consumo mensal e descubra o sistema ideal.</p>
+            </div>
+            <div onclick="alert('Simulador de Área - Em restauração completa.')" class="card cursor-pointer bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-3xl p-7 hover:border-emerald-400 group">
+                <div class="w-11 h-11 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 rounded-2xl flex items-center justify-center"><i class="fa-solid fa-ruler-combined text-3xl"></i></div>
+                <h3 class="font-semibold text-2xl mt-6 mb-1 tracking-tight">Área Disponível</h3>
+                <p class="text-sm text-zinc-500">Calcule quantos painéis cabem no seu telhado ou terreno.</p>
+            </div>
+            <div onclick="alert('Simulador de Equipamentos - Em restauração completa.')" class="card cursor-pointer bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-3xl p-7 hover:border-sky-400 group">
+                <div class="w-11 h-11 bg-sky-100 dark:bg-sky-900/40 text-sky-600 rounded-2xl flex items-center justify-center"><i class="fa-solid fa-microchip text-3xl"></i></div>
+                <h3 class="font-semibold text-2xl mt-6 mb-1 tracking-tight">Escolha de Equipamentos</h3>
+                <p class="text-sm text-zinc-500">Selecione módulos (570-630W) e marca de inversor.</p>
+            </div>
+            <div onclick="window.open('https://wa.me/5562991758807?text=Olá%20YWS%20Solar!%20Quero%20agendar%20inspeção%20e%20limpeza%20de%20painéis.','_blank')" class="card cursor-pointer bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-3xl p-7 hover:border-rose-400 group">
+                <div class="w-11 h-11 bg-rose-100 dark:bg-rose-900/40 text-rose-600 rounded-2xl flex items-center justify-center"><i class="fa-solid fa-hand-sparkles text-3xl"></i></div>
+                <h3 class="font-semibold text-2xl mt-6 mb-1 tracking-tight">Inspeção e Limpeza</h3>
+                <p class="text-sm text-zinc-500">Agende uma visita técnica via WhatsApp.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="bg-zinc-900 dark:bg-black py-16">
+        <div class="max-w-screen-2xl mx-auto px-8 text-center">
+            <h2 class="text-white text-4xl font-display font-bold tracking-tight">Pronto para economizar de verdade?</h2>
+            <p class="text-zinc-400 mt-3 max-w-md mx-auto">Fale agora com um especialista da YWS Solar.</p>
+            <div class="flex flex-wrap justify-center gap-4 mt-8">
+                <a href="https://wa.me/5562991758807?text=Olá%20YWS%20Solar!%20Quero%20falar%20com%20um%20especialista." target="_blank" class="px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-3xl font-semibold flex items-center gap-x-3">
+                    <i class="fa-brands fa-whatsapp"></i> Falar no WhatsApp
+                </a>
+            </div>
+        </div>
     </div>
-    <h1 class="text-3xl font-bold tracking-tight mb-2">YWS Solar</h1>
-    <p class="text-zinc-500 mb-8">Plataforma de simulação e orçamento de energia solar</p>
-    <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5 text-sm text-amber-800 mb-6">
-      <strong>Site em restauração</strong><br>
-      O conteúdo completo está sendo reaplicado. Em breve todos os simuladores e a geração de PDF estarão de volta.
-    </div>
-    <a href="https://wa.me/5562991758807" target="_blank"
-       class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-2xl font-semibold transition">
-      <i class="fa-brands fa-whatsapp text-xl"></i>
-      Falar no WhatsApp
-    </a>
-  </div>
+
+    <footer class="bg-white dark:bg-zinc-950 border-t border-zinc-200 dark:border-zinc-800 py-10">
+        <div class="max-w-screen-2xl mx-auto px-8 text-sm flex flex-col md:flex-row justify-between items-center gap-y-4 text-zinc-500">
+            <div>© 2026 YWS Solar • Todos os direitos reservados</div>
+            <div class="flex items-center gap-x-2 text-xs">Feito com ❤️ para o futuro sustentável do Brasil</div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+        }
+        function initTheme() {
+            const saved = localStorage.getItem('theme');
+            if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            }
+        }
+        function toggleMobileMenu() {
+            alert('Menu mobile - use o WhatsApp para atendimento rápido.');
+        }
+        function showHistory() {
+            alert('Histórico de simulações estará disponível na versão completa. Enquanto isso, fale conosco no WhatsApp.');
+        }
+        window.onload = initTheme;
+    </script>
 </body>
 </html>
