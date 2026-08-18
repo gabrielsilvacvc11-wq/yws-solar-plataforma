@@ -3,372 +3,257 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>YWS Solar • Plataforma Inteligente | Simuladores e Orçamento</title>
-  <meta name="description" content="Simule seu sistema de energia solar fotovoltaica, calcule economia e gere orçamento em PDF. YWS Solar - Goiás.">
+  <title>YWS Solar • Plataforma Inteligente de Energia Solar</title>
+  <meta name="description" content="Simule, dimensione e gere orçamento profissional de sistemas fotovoltaicos. YWS Solar — Goiás.">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{colors:{yws:{50:'#eff6ff',100:'#dbeafe',500:'#3b82f6',600:'#2563eb',700:'#1d4ed8',800:'#1e40af',900:'#1e3a8a'},solar:{400:'#facc15',500:'#eab308',600:'#ca8a04'}}}}}</script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap');
-    body { font-family: 'Inter', system-ui, sans-serif; }
-    .font-display { font-family: 'Poppins', 'Inter', sans-serif; }
-    .solar-gradient { background: linear-gradient(135deg, #eab308 0%, #16a34a 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    body{font-family:'Inter',system-ui,sans-serif}
+    .font-display{font-family:'Poppins','Inter',sans-serif}
+    .card{transition:box-shadow .2s ease,transform .2s ease}
+    .card:hover{box-shadow:0 12px 24px -8px rgb(0 0 0 / .12)}
+    .result-enter{animation:fadeUp .35s ease forwards}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    input:focus,select:focus{outline:none;box-shadow:0 0 0 3px rgba(37,99,235,.25);border-color:#2563eb}
   </style>
 </head>
-<body class="bg-zinc-50 text-zinc-900">
-  <nav class="bg-white/95 backdrop-blur border-b border-zinc-200 sticky top-0 z-50">
-    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-      <div class="flex items-center gap-2.5">
-        <div class="w-10 h-10 bg-gradient-to-br from-yellow-400 to-emerald-600 rounded-xl flex items-center justify-center">
-          <i class="fa-solid fa-sun text-white text-xl"></i>
-        </div>
-        <span class="font-display text-2xl font-bold tracking-tight">YWS <span class="text-emerald-600">Solar</span></span>
+<body class="bg-slate-50 text-slate-900 antialiased">
+<nav class="bg-white/95 backdrop-blur border-b border-slate-200 sticky top-0 z-50">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+    <div class="flex items-center gap-2.5">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-yws-600 to-yws-800 flex items-center justify-center shadow-sm">
+        <i class="fa-solid fa-sun text-solar-400 text-lg"></i>
       </div>
-      <div class="flex items-center gap-3">
-        <a href="#simuladores" class="hidden sm:inline text-sm font-medium hover:text-yellow-600">Simuladores</a>
-        <a href="https://wa.me/5562991758807?text=Olá%20YWS%20Solar!%20Quero%20falar%20com%20um%20especialista." target="_blank"
-           class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2">
-          <i class="fa-brands fa-whatsapp"></i> WhatsApp
-        </a>
-      </div>
+      <div><span class="font-display font-bold text-lg tracking-tight">YWS</span><span class="font-display font-semibold text-lg text-yws-700"> Solar</span></div>
     </div>
-  </nav>
-
-  <section class="max-w-6xl mx-auto px-4 pt-12 pb-10 text-center">
-    <div class="inline-flex items-center gap-2 bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-semibold mb-5">
-      <span class="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></span> GOIÁS • BRASIL • 2026
-    </div>
-    <h1 class="font-display text-4xl md:text-5xl font-bold tracking-tight mb-4">
-      Energia solar <span class="solar-gradient">inteligente</span><br>para o seu futuro
-    </h1>
-    <p class="text-zinc-600 max-w-xl mx-auto mb-8">
-      Simule seu sistema em segundos, descubra a economia e gere um orçamento profissional em PDF.
-    </p>
-    <button onclick="document.getElementById('simuladores').scrollIntoView({behavior:'smooth'})"
-            class="bg-zinc-900 hover:bg-zinc-800 text-white px-8 py-3.5 rounded-2xl font-semibold inline-flex items-center gap-2">
-      Fazer simulação gratuita <i class="fa-solid fa-arrow-right"></i>
-    </button>
-  </section>
-
-  <section id="simuladores" class="max-w-6xl mx-auto px-4 py-10">
-    <h2 class="font-display text-3xl font-bold text-center mb-2">Simuladores</h2>
-    <p class="text-center text-zinc-500 mb-10">Escolha o simulador e gere seu orçamento em PDF</p>
-
-    <div class="grid md:grid-cols-2 gap-6">
-      <div class="bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm">
-        <div class="flex items-center gap-3 mb-5">
-          <div class="w-11 h-11 bg-yellow-100 text-yellow-600 rounded-xl flex items-center justify-center">
-            <i class="fa-solid fa-bolt-lightning text-xl"></i>
-          </div>
-          <h3 class="font-semibold text-xl">Consumo de Energia</h3>
-        </div>
-        <label class="block text-sm font-medium mb-1">Valor médio da conta (R$)</label>
-        <input type="number" id="sim1-conta" value="380" min="50" class="w-full border border-zinc-300 rounded-xl px-4 py-3 mb-3 font-mono">
-        <label class="block text-sm font-medium mb-1">Cidade</label>
-        <select id="sim1-cidade" class="w-full border border-zinc-300 rounded-xl px-4 py-3 mb-4">
-          <option value="Goiânia">Goiânia</option>
-          <option value="Aparecida de Goiânia">Aparecida de Goiânia</option>
-          <option value="Anápolis">Anápolis</option>
-          <option value="Brasília">Brasília</option>
-          <option value="São Paulo">São Paulo</option>
-        </select>
-        <button onclick="runSim1()" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded-xl font-semibold">CALCULAR SISTEMA</button>
-        <div id="sim1-result" class="mt-4 hidden"></div>
-      </div>
-
-      <div class="bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm">
-        <div class="flex items-center gap-3 mb-5">
-          <div class="w-11 h-11 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center">
-            <i class="fa-solid fa-ruler-combined text-xl"></i>
-          </div>
-          <h3 class="font-semibold text-xl">Área Disponível</h3>
-        </div>
-        <div class="grid grid-cols-2 gap-3 mb-3">
-          <div>
-            <label class="block text-sm font-medium mb-1">Comprimento (m)</label>
-            <input type="number" id="sim2-comp" value="12" step="0.5" class="w-full border border-zinc-300 rounded-xl px-4 py-3 font-mono">
-          </div>
-          <div>
-            <label class="block text-sm font-medium mb-1">Largura (m)</label>
-            <input type="number" id="sim2-larg" value="8" step="0.5" class="w-full border border-zinc-300 rounded-xl px-4 py-3 font-mono">
-          </div>
-        </div>
-        <label class="block text-sm font-medium mb-1">Tipo de telhado</label>
-        <select id="sim2-telhado" class="w-full border border-zinc-300 rounded-xl px-4 py-3 mb-4">
-          <option value="0.78">Inclinado (15°–30°)</option>
-          <option value="0.88">Plano / Laje</option>
-          <option value="0.95">Solo / Estrutura</option>
-        </select>
-        <button onclick="runSim2()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-semibold">CALCULAR ÁREA</button>
-        <div id="sim2-result" class="mt-4 hidden"></div>
-      </div>
-
-      <div class="bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm">
-        <div class="flex items-center gap-3 mb-5">
-          <div class="w-11 h-11 bg-sky-100 text-sky-600 rounded-xl flex items-center justify-center">
-            <i class="fa-solid fa-microchip text-xl"></i>
-          </div>
-          <h3 class="font-semibold text-xl">Equipamentos</h3>
-        </div>
-        <label class="block text-sm font-medium mb-1">Quantidade de painéis</label>
-        <input type="number" id="sim3-qtd" value="30" min="1" max="500" class="w-full border border-zinc-300 rounded-xl px-4 py-3 mb-3 font-mono">
-        <label class="block text-sm font-medium mb-1">Potência do módulo</label>
-        <select id="sim3-pot" class="w-full border border-zinc-300 rounded-xl px-4 py-3 mb-3">
-          <option value="570">570 W</option>
-          <option value="600" selected>600 W</option>
-          <option value="610">610 W</option>
-          <option value="630">630 W</option>
-        </select>
-        <label class="block text-sm font-medium mb-1">Inversor</label>
-        <select id="sim3-inv" class="w-full border border-zinc-300 rounded-xl px-4 py-3 mb-4">
-          <option>Growatt</option>
-          <option>Deye</option>
-          <option>Solis</option>
-          <option>Sungrow</option>
-          <option>GoodWe</option>
-          <option>Huawei</option>
-        </select>
-        <button onclick="runSim3()" class="w-full bg-sky-600 hover:bg-sky-700 text-white py-3 rounded-xl font-semibold">VERIFICAR SISTEMA</button>
-        <div id="sim3-result" class="mt-4 hidden"></div>
-      </div>
-
-      <div class="bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm">
-        <div class="flex items-center gap-3 mb-5">
-          <div class="w-11 h-11 bg-rose-100 text-rose-600 rounded-xl flex items-center justify-center">
-            <i class="fa-solid fa-hand-sparkles text-xl"></i>
-          </div>
-          <h3 class="font-semibold text-xl">Inspeção e Limpeza</h3>
-        </div>
-        <p class="text-sm text-zinc-600 mb-6">Agende uma visita técnica. Nossa equipe calcula o deslocamento conforme o bairro e gera laudo.</p>
-        <a href="https://wa.me/5562991758807?text=Olá%20YWS%20Solar!%20Quero%20agendar%20inspeção%20e%20limpeza%20de%20painéis." target="_blank"
-           class="block w-full bg-rose-600 hover:bg-rose-700 text-white py-3 rounded-xl font-semibold text-center">
-          <i class="fa-brands fa-whatsapp mr-2"></i> AGENDAR NO WHATSAPP
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <section class="bg-zinc-900 text-white py-14 mt-10">
-    <div class="max-w-6xl mx-auto px-4 text-center">
-      <h2 class="font-display text-3xl font-bold mb-3">Pronto para economizar de verdade?</h2>
-      <p class="text-zinc-400 mb-8">Fale com um especialista da YWS Solar agora mesmo.</p>
-      <a href="https://wa.me/5562991758807?text=Olá%20YWS%20Solar!%20Quero%20falar%20com%20um%20especialista." target="_blank"
-         class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 px-8 py-3.5 rounded-2xl font-semibold">
-        <i class="fa-brands fa-whatsapp text-xl"></i> Falar no WhatsApp
+    <div class="flex items-center gap-2 sm:gap-4">
+      <button onclick="showHistory()" class="hidden sm:flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-yws-700 px-3 py-1.5 rounded-lg hover:bg-slate-100">
+        <i class="fa-solid fa-clock-rotate-left"></i> Minhas simulações
+      </button>
+      <a href="https://wa.me/5562991758807?text=Olá%20YWS%20Solar!%20Quero%20falar%20com%20um%20especialista." target="_blank" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-4 py-2 rounded-full shadow-sm">
+        <i class="fa-brands fa-whatsapp text-base"></i>
+        <span class="hidden sm:inline">Falar com especialista</span><span class="sm:hidden">WhatsApp</span>
       </a>
     </div>
-  </section>
+  </div>
+</nav>
 
-  <footer class="py-8 text-center text-sm text-zinc-500">
-    © 2026 YWS Solar • Goiás, Brasil • Todos os direitos reservados
-  </footer>
+<header class="bg-white border-b border-slate-100">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
+    <div class="max-w-2xl">
+      <div class="inline-flex items-center gap-2 bg-yws-50 text-yws-700 text-xs font-semibold px-3 py-1 rounded-full mb-5">
+        <span class="w-1.5 h-1.5 rounded-full bg-yws-600"></span> Plataforma oficial YWS Solar • Goiás
+      </div>
+      <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-slate-900 leading-tight mb-4">Energia solar inteligente<br>para o seu futuro</h1>
+      <p class="text-slate-600 text-base sm:text-lg mb-8 max-w-lg">Dimensione seu sistema fotovoltaico, visualize a economia e gere um orçamento profissional em PDF em poucos minutos.</p>
+      <div class="flex flex-col sm:flex-row gap-3">
+        <button onclick="document.getElementById('simuladores').scrollIntoView({behavior:'smooth'})" class="inline-flex items-center justify-center gap-2 bg-yws-700 hover:bg-yws-800 text-white font-semibold px-6 py-3.5 rounded-xl shadow-sm">Fazer simulação gratuita <i class="fa-solid fa-arrow-right text-sm"></i></button>
+        <a href="https://wa.me/5562991758807?text=Olá%20YWS%20Solar!%20Quero%20falar%20com%20um%20especialista." target="_blank" class="inline-flex items-center justify-center gap-2 border border-slate-300 hover:border-slate-400 bg-white text-slate-800 font-semibold px-6 py-3.5 rounded-xl"><i class="fa-brands fa-whatsapp text-emerald-600"></i> Falar com especialista</a>
+      </div>
+    </div>
+  </div>
+</header>
 
-  <script>
-    const IRRAD = {"Goiânia":5.4,"Aparecida de Goiânia":5.3,"Anápolis":5.3,"Brasília":5.7,"São Paulo":4.8};
-    const PRECOS = {painel600:690,painel570:650,painel610:710,painel630:740,estruturaPorPainel:130,caboCCPorPainel:35,mc4Par:28,caboCABase:600,caboCAPorKwp:55,stringBoxBase:900,stringBoxPorKwp:55,protecoesBase:500,protecoesPorKwp:35,aterramentoPorPainel:18,maoObraPorKwp:160,projetoPorKwp:55,monitoramentoBase:350};
+<section class="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+  <div class="grid sm:grid-cols-3 gap-6">
+    <div class="bg-white rounded-2xl border border-slate-200 p-6 text-center">
+      <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-yws-50 text-yws-700 flex items-center justify-center font-bold text-lg">1</div>
+      <h3 class="font-semibold mb-1">Informe seu consumo</h3>
+      <p class="text-sm text-slate-500">Digite o valor da conta de energia e a cidade.</p>
+    </div>
+    <div class="bg-white rounded-2xl border border-slate-200 p-6 text-center">
+      <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-yws-50 text-yws-700 flex items-center justify-center font-bold text-lg">2</div>
+      <h3 class="font-semibold mb-1">Dimensione seu sistema</h3>
+      <p class="text-sm text-slate-500">Veja potência, painéis e geração estimada.</p>
+    </div>
+    <div class="bg-white rounded-2xl border border-slate-200 p-6 text-center">
+      <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-yws-50 text-yws-700 flex items-center justify-center font-bold text-lg">3</div>
+      <h3 class="font-semibold mb-1">Receba seu orçamento</h3>
+      <p class="text-sm text-slate-500">Gere o PDF profissional com todos os materiais.</p>
+    </div>
+  </div>
+</section>
 
-    function fmt(v){return "R$ "+Number(v).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});}
+<section id="simuladores" class="max-w-6xl mx-auto px-4 sm:px-6 pb-16">
+  <div class="text-center mb-10">
+    <h2 class="font-display text-2xl sm:text-3xl font-bold tracking-tight">Simuladores</h2>
+    <p class="text-slate-500 mt-1">Escolha a ferramenta e gere seu orçamento em PDF</p>
+  </div>
+  <div class="grid lg:grid-cols-2 gap-6">
 
-    function buildItens(qtdPaineis,potenciaPainel,kwp,inversorNome){
-      const precoPainel=PRECOS["painel"+potenciaPainel]||690;
-      const precoInversor=Math.round(kwp*480+1500);
-      const precoEstrutura=Math.round(qtdPaineis*PRECOS.estruturaPorPainel);
-      const precoCabosCC=Math.round(qtdPaineis*PRECOS.caboCCPorPainel+400);
-      const qtdMC4=Math.ceil(qtdPaineis/2);
-      const precoCabosCA=Math.round(PRECOS.caboCABase+kwp*PRECOS.caboCAPorKwp);
-      const precoStringBox=Math.round(PRECOS.stringBoxBase+kwp*PRECOS.stringBoxPorKwp);
-      const precoProtecoes=Math.round(PRECOS.protecoesBase+kwp*PRECOS.protecoesPorKwp);
-      const precoAterramento=Math.round(qtdPaineis*PRECOS.aterramentoPorPainel+400);
-      const precoMaoObra=Math.round(kwp*PRECOS.maoObraPorKwp+1200);
-      const precoProjeto=Math.round(kwp*PRECOS.projetoPorKwp+900);
-      const precoMonitor=Math.round(PRECOS.monitoramentoBase+kwp*18);
-      return [
-        {item:"01",qtd:qtdPaineis,desc:"Painel solar fotovoltaico "+potenciaPainel+" W",unit:precoPainel},
-        {item:"02",qtd:1,desc:"Inversor solar "+inversorNome+" "+Math.ceil(kwp)+" kW",unit:precoInversor},
-        {item:"03",qtd:1,desc:"Estrutura de fixação para "+qtdPaineis+" painéis",unit:precoEstrutura},
-        {item:"04",qtd:1,desc:"Kit de cabos solares CC",unit:precoCabosCC},
-        {item:"05",qtd:qtdMC4,desc:"Par de conectores MC4",unit:PRECOS.mc4Par},
-        {item:"06",qtd:1,desc:"Cabos CA e acessórios",unit:precoCabosCA},
-        {item:"07",qtd:1,desc:"String Box / proteção CC e CA",unit:precoStringBox},
-        {item:"08",qtd:1,desc:"Disjuntores, DPS e proteções",unit:precoProtecoes},
-        {item:"09",qtd:1,desc:"Kit de aterramento",unit:precoAterramento},
-        {item:"10",qtd:1,desc:"Instalação e mão de obra",unit:precoMaoObra},
-        {item:"11",qtd:1,desc:"Projeto, documentação e homologação",unit:precoProjeto},
-        {item:"12",qtd:1,desc:"Configuração e monitoramento",unit:precoMonitor}
-      ];
-    }
+    <div class="card bg-white rounded-2xl border border-slate-200 p-5 sm:p-6">
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center"><i class="fa-solid fa-bolt text-lg"></i></div>
+        <div><h3 class="font-semibold text-lg">Consumo de Energia</h3><p class="text-xs text-slate-500">A partir do valor da sua conta</p></div>
+      </div>
+      <div class="space-y-3">
+        <div><label class="block text-sm font-medium text-slate-700 mb-1">Valor médio da conta (R$)</label>
+          <input type="number" id="s1-conta" value="380" min="50" step="10" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-base font-mono"></div>
+        <div><label class="block text-sm font-medium text-slate-700 mb-1">Cidade</label>
+          <select id="s1-cidade" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-base">
+            <option value="Goiânia">Goiânia / GO</option>
+            <option value="Aparecida de Goiânia">Aparecida de Goiânia / GO</option>
+            <option value="Anápolis">Anápolis / GO</option>
+            <option value="Brasília">Brasília / DF</option>
+            <option value="São Paulo">São Paulo / SP</option>
+          </select></div>
+        <div><label class="block text-sm font-medium text-slate-700 mb-1">Tipo de consumidor</label>
+          <select id="s1-tipo" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-base">
+            <option value="residencial">Residencial</option>
+            <option value="comercial">Comercial</option>
+            <option value="rural">Rural</option>
+          </select></div>
+        <button onclick="runSim1()" class="w-full bg-yws-700 hover:bg-yws-800 text-white font-semibold py-3.5 rounded-xl mt-1">Calcular sistema</button>
+      </div>
+      <div id="s1-out" class="mt-5 hidden"></div>
+    </div>
 
-    function gerarPDF(dados){
-      const {jsPDF}=window.jspdf;
-      const doc=new jsPDF({orientation:"portrait",unit:"mm",format:"a4"});
-      const pageW=doc.internal.pageSize.getWidth();
-      const margin=14;
-      let y=12;
-      const itens=buildItens(dados.qtdPaineis,dados.potenciaPainel,dados.kwp,dados.inversor||"Growatt");
-      itens.forEach(i=>i.total=i.qtd*i.unit);
-      const totalMateriais=itens.slice(0,9).reduce((s,i)=>s+i.total,0);
-      const totalServicos=itens.slice(9).reduce((s,i)=>s+i.total,0);
-      const totalGeral=totalMateriais+totalServicos;
-      const orcId="YWS-"+new Date().getFullYear()+"-"+String(Date.now()).slice(-6);
-      const dataStr=new Date().toLocaleDateString("pt-BR");
+    <div class="card bg-white rounded-2xl border border-slate-200 p-5 sm:p-6">
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><i class="fa-solid fa-ruler-combined text-lg"></i></div>
+        <div><h3 class="font-semibold text-lg">Área Disponível</h3><p class="text-xs text-slate-500">Quantos painéis cabem no telhado</p></div>
+      </div>
+      <div class="space-y-3">
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="block text-sm font-medium text-slate-700 mb-1">Comprimento (m)</label>
+            <input type="number" id="s2-comp" value="12" min="1" step="0.5" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-base font-mono"></div>
+          <div><label class="block text-sm font-medium text-slate-700 mb-1">Largura (m)</label>
+            <input type="number" id="s2-larg" value="8" min="1" step="0.5" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-base font-mono"></div>
+        </div>
+        <div><label class="block text-sm font-medium text-slate-700 mb-1">Tipo de telhado</label>
+          <select id="s2-telhado" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-base">
+            <option value="0.78">Inclinado (cerâmica / fibrocimento)</option>
+            <option value="0.88">Plano / Laje</option>
+            <option value="0.95">Solo / Estrutura metálica</option>
+          </select></div>
+        <button onclick="runSim2()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3.5 rounded-xl mt-1">Calcular área</button>
+      </div>
+      <div id="s2-out" class="mt-5 hidden"></div>
+    </div>
 
-      doc.setFillColor(30,64,175);
-      doc.rect(0,0,pageW,26,"F");
-      doc.setTextColor(255,255,255);
-      doc.setFontSize(16);
-      doc.setFont("helvetica","bold");
-      doc.text("YWS SOLAR",margin,12);
-      doc.setFontSize(8);
-      doc.setFont("helvetica","normal");
-      doc.text("Soluções elétricas e energia solar",margin,18);
-      doc.text(orcId,pageW-margin,12,{align:"right"});
-      doc.text("WhatsApp: (62) 99175-8807",pageW-margin,18,{align:"right"});
+    <div class="card bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 lg:col-span-2">
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-11 h-11 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center"><i class="fa-solid fa-microchip text-lg"></i></div>
+        <div><h3 class="font-semibold text-lg">Equipamentos</h3><p class="text-xs text-slate-500">Monte o sistema e valide compatibilidade</p></div>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div><label class="block text-sm font-medium text-slate-700 mb-1">Qtd. de painéis</label>
+          <input type="number" id="s3-qtd" value="30" min="1" max="500" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-base font-mono"></div>
+        <div><label class="block text-sm font-medium text-slate-700 mb-1">Potência do módulo</label>
+          <select id="s3-pot" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-base">
+            <option value="570">570 W</option><option value="600" selected>600 W</option><option value="610">610 W</option><option value="630">630 W</option>
+          </select></div>
+        <div><label class="block text-sm font-medium text-slate-700 mb-1">Inversor (marca)</label>
+          <select id="s3-inv" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-base">
+            <option>Growatt</option><option>Deye</option><option>Solis</option><option>Sungrow</option><option>GoodWe</option><option>Huawei</option>
+          </select></div>
+        <div><label class="block text-sm font-medium text-slate-700 mb-1">Potência do inversor (kW)</label>
+          <input type="number" id="s3-invkw" value="20" min="1" step="0.5" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-base font-mono"></div>
+      </div>
+      <button onclick="runSim3()" class="w-full sm:w-auto mt-4 bg-sky-600 hover:bg-sky-700 text-white font-semibold px-8 py-3.5 rounded-xl">Verificar sistema</button>
+      <div id="s3-out" class="mt-5 hidden"></div>
+    </div>
+  </div>
+</section>
 
-      y=34;
-      doc.setTextColor(30,64,175);
-      doc.setFontSize(12);
-      doc.setFont("helvetica","bold");
-      doc.text("ORÇAMENTO COMERCIAL — SISTEMA FOTOVOLTAICO "+dados.kwp.toFixed(1)+" kWp",pageW/2,y,{align:"center"});
-      y+=7;
-      doc.setTextColor(80,80,80);
-      doc.setFontSize(8);
-      doc.setFont("helvetica","normal");
-      doc.text("Gerado automaticamente a partir da simulação • "+dataStr,pageW/2,y,{align:"center"});
-      y+=8;
+<section class="bg-white border-y border-slate-200">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+    <div class="flex flex-col lg:flex-row gap-8 items-start">
+      <div class="flex-1">
+        <div class="inline-flex items-center gap-2 text-rose-600 text-sm font-semibold mb-3"><i class="fa-solid fa-hand-sparkles"></i> Inspeção e Limpeza</div>
+        <h2 class="font-display text-2xl font-bold mb-3">Aumente a geração dos seus painéis</h2>
+        <p class="text-slate-600 mb-5 max-w-lg">Sujeira e sombreamento podem reduzir a geração em até 30%. Nossa equipe realiza inspeção técnica e limpeza profissional.</p>
+        <ul class="space-y-2 text-sm text-slate-700 mb-6">
+          <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i> Limpeza com água deionizada e produtos adequados</li>
+          <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i> Verificação de conectores, cabos e estrutura</li>
+          <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i> Laudo fotográfico e recomendações</li>
+        </ul>
+        <a href="https://wa.me/5562991758807?text=Olá%20YWS%20Solar!%20Quero%20agendar%20inspeção%20e%20limpeza%20de%20painéis." target="_blank" class="inline-flex items-center gap-2 bg-rose-600 hover:bg-rose-700 text-white font-semibold px-6 py-3 rounded-xl"><i class="fa-brands fa-whatsapp"></i> Agendar no WhatsApp</a>
+      </div>
+      <div class="w-full lg:w-80 bg-rose-50 rounded-2xl p-6 border border-rose-100">
+        <div class="text-4xl font-bold text-rose-600 mb-1">+30%</div>
+        <div class="text-sm text-rose-800 font-medium">Potencial de recuperação de geração após limpeza profissional</div>
+      </div>
+    </div>
+  </div>
+</section>
 
-      doc.setFillColor(241,245,249);
-      doc.roundedRect(margin,y,pageW-margin*2,16,2,2,"F");
-      doc.setTextColor(30,30,30);
-      doc.setFontSize(8);
-      doc.setFont("helvetica","bold");
-      doc.text("Dados do projeto",margin+3,y+5);
-      doc.setFont("helvetica","normal");
-      doc.text("Potência: "+dados.kwp.toFixed(1)+" kWp",margin+3,y+11);
-      doc.text("Painéis: "+dados.qtdPaineis+" × "+dados.potenciaPainel+" W",margin+55,y+11);
-      doc.text("Tipo: Conectado à rede",margin+120,y+11);
-      y+=22;
+<section class="bg-yws-900 text-white">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-14 text-center">
+    <h2 class="font-display text-2xl sm:text-3xl font-bold mb-3">Pronto para economizar de verdade?</h2>
+    <p class="text-yws-100 mb-8 max-w-md mx-auto">Fale agora com um especialista da YWS Solar e tire suas dúvidas.</p>
+    <a href="https://wa.me/5562991758807?text=Olá%20YWS%20Solar!%20Quero%20falar%20com%20um%20especialista." target="_blank" class="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-8 py-3.5 rounded-xl"><i class="fa-brands fa-whatsapp text-xl"></i> Falar no WhatsApp</a>
+  </div>
+</section>
 
-      doc.setFontSize(9);
-      doc.setFont("helvetica","bold");
-      doc.setTextColor(30,64,175);
-      doc.text("Composição do sistema",margin,y);
-      y+=5;
+<footer class="bg-white border-t border-slate-200 py-8">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-3 text-sm text-slate-500">
+    <div>© 2026 YWS Solar • Goiás, Brasil</div>
+    <button onclick="showHistory()" class="text-yws-700 hover:underline font-medium">Minhas simulações</button>
+  </div>
+</footer>
 
-      const col=[margin,margin+10,margin+22,margin+115,margin+145];
-      doc.setFillColor(30,64,175);
-      doc.rect(margin,y,pageW-margin*2,6.5,"F");
-      doc.setTextColor(255,255,255);
-      doc.setFontSize(7);
-      doc.text("Item",col[0]+1,y+4.2);
-      doc.text("Qtd.",col[1]+1,y+4.2);
-      doc.text("Descrição",col[2]+1,y+4.2);
-      doc.text("Valor unit.",col[3]+1,y+4.2);
-      doc.text("Total",col[4]+1,y+4.2);
-      y+=6.5;
+<div id="history-modal" class="fixed inset-0 z-[100] hidden">
+  <div class="absolute inset-0 bg-black/40" onclick="closeHistory()"></div>
+  <div class="absolute inset-x-0 bottom-0 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-full sm:max-w-lg bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl max-h-[80vh] overflow-hidden flex flex-col">
+    <div class="flex items-center justify-between px-5 py-4 border-b">
+      <h3 class="font-semibold text-lg">Minhas simulações</h3>
+      <button onclick="closeHistory()" class="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div id="history-list" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
+    <div class="p-4 border-t"><button onclick="clearHistory()" class="w-full text-sm text-red-600 hover:bg-red-50 py-2 rounded-lg">Limpar histórico</button></div>
+  </div>
+</div>
 
-      doc.setTextColor(30,30,30);
-      doc.setFont("helvetica","normal");
-      itens.forEach((row,idx)=>{
-        if(y>250){doc.addPage();y=20;}
-        if(idx%2===0){doc.setFillColor(248,250,252);doc.rect(margin,y,pageW-margin*2,6,"F");}
-        doc.setFontSize(7);
-        doc.text(row.item,col[0]+1,y+4);
-        doc.text(String(row.qtd),col[1]+1,y+4);
-        doc.text(row.desc.substring(0,52),col[2]+1,y+4);
-        doc.text(fmt(row.unit),col[3]+1,y+4);
-        doc.text(fmt(row.total),col[4]+1,y+4);
-        y+=6;
-      });
-
-      y+=6;
-      doc.setFontSize(9);
-      doc.setFont("helvetica","bold");
-      doc.setTextColor(30,64,175);
-      doc.text("Resumo financeiro",margin,y);
-      y+=5;
-      doc.setFillColor(241,245,249);
-      doc.roundedRect(margin,y,pageW-margin*2,20,2,2,"F");
-      doc.setTextColor(30,30,30);
-      doc.setFontSize(8);
-      doc.setFont("helvetica","normal");
-      doc.text("Materiais e equipamentos",margin+3,y+6);
-      doc.text(fmt(totalMateriais),pageW-margin-3,y+6,{align:"right"});
-      doc.text("Serviços, instalação e documentação",margin+3,y+12);
-      doc.text(fmt(totalServicos),pageW-margin-3,y+12,{align:"right"});
-      doc.setFont("helvetica","bold");
-      doc.setFontSize(9);
-      doc.setTextColor(30,64,175);
-      doc.text("TOTAL DO ORÇAMENTO",margin+3,y+18);
-      doc.text(fmt(totalGeral),pageW-margin-3,y+18,{align:"right"});
-      y+=26;
-
-      doc.setFontSize(7);
-      doc.setTextColor(100,100,100);
-      doc.setFont("helvetica","normal");
-      doc.text("Este orçamento foi gerado automaticamente pela YWS Solar com base nos dados da simulação.",margin,y);
-      y+=4;
-      doc.text("Os valores e especificações devem ser conferidos antes da contratação. Validade: 15 dias.",margin,y);
-      y+=10;
-
-      doc.setDrawColor(30,64,175);
-      doc.setLineWidth(0.4);
-      doc.rect(pageW/2-15,y,30,30);
-      doc.setFontSize(6);
-      doc.setTextColor(30,64,175);
-      doc.text("QR Code",pageW/2,y+16,{align:"center"});
-      doc.text("demonstrativo",pageW/2,y+20,{align:"center"});
-      y+=36;
-      doc.setFontSize(7);
-      doc.setTextColor(120,120,120);
-      doc.text("Escaneie para falar conosco no WhatsApp: (62) 99175-8807",pageW/2,y,{align:"center"});
-
-      doc.setDrawColor(30,64,175);
-      doc.line(margin,285,pageW-margin,285);
-      doc.setFontSize(7);
-      doc.setTextColor(100,100,100);
-      doc.text("YWS Solar — Transformando o sol em economia.",margin,290);
-      doc.text("www.ywssolar.com.br",pageW-margin,290,{align:"right"});
-
-      doc.save("YWS_Orcamento_"+dados.kwp.toFixed(1).replace(".",",")+"kWp_"+orcId+".pdf");
-    }
-
-    function runSim1(){
-      const conta=parseFloat(document.getElementById("sim1-conta").value)||380;
-      const cidade=document.getElementById("sim1-cidade").value;
-      const ir=IRRAD[cidade]||5.2;
-      const kwh=Math.round(conta/0.95);
-      const kwp=kwh/(ir*30*0.82);
-      const qtdPaineis=Math.ceil(kwp/0.6);
-      const economia=Math.round(kwh*0.9);
-      const dados={tipo:"Consumo",kwp:parseFloat(kwp.toFixed(1)),qtdPaineis,potenciaPainel:600,inversor:"Growatt",economia,cidade};
-      const el=document.getElementById("sim1-result");
-      el.innerHTML=`<div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4 text-sm"><div class="font-bold text-lg mb-1">${dados.kwp} kWp • ${qtdPaineis} painéis</div><div class="text-zinc-600">Consumo: ${kwh} kWh/mês • Economia: <strong class="text-emerald-600">R$ ${economia}/mês</strong></div><button onclick='gerarPDF(${JSON.stringify(dados)})' class="mt-3 w-full border border-yellow-500 text-yellow-700 hover:bg-yellow-50 py-2.5 rounded-lg text-sm font-medium">📄 Gerar orçamento em PDF</button></div>`;
-      el.classList.remove("hidden");
-    }
-
-    function runSim2(){
-      const comp=parseFloat(document.getElementById("sim2-comp").value)||12;
-      const larg=parseFloat(document.getElementById("sim2-larg").value)||8;
-      const fator=parseFloat(document.getElementById("sim2-telhado").value)||0.78;
-      const areaUtil=Math.round(comp*larg*fator);
-      const qtdPaineis=Math.floor(areaUtil/2.05);
-      const kwp=parseFloat((qtdPaineis*0.6).toFixed(1));
-      const dados={tipo:"Área",kwp,qtdPaineis,potenciaPainel:600,inversor:"Growatt",areaUtil};
-      const el=document.getElementById("sim2-result");
-      el.innerHTML=`<div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-sm"><div class="font-bold text-lg mb-1">${qtdPaineis} painéis • ${kwp} kWp</div><div class="text-zinc-600">Área útil: ${areaUtil} m²</div><button onclick='gerarPDF(${JSON.stringify(dados)})' class="mt-3 w-full border border-emerald-500 text-emerald-700 hover:bg-emerald-50 py-2.5 rounded-lg text-sm font-medium">📄 Gerar orçamento em PDF</button></div>`;
-      el.classList.remove("hidden");
-    }
-
-    function runSim3(){
-      const qtd=parseInt(document.getElementById("sim3-qtd").value)||30;
-      const pot=parseInt(document.getElementById("sim3-pot").value)||600;
-      const inv=document.getElementById("sim3-inv").value;
-      const kwp=parseFloat(((qtd*pot)/1000).toFixed(1));
-      const dados={tipo:"Equipamentos",kwp,qtdPaineis:qtd,potenciaPainel:pot,inversor:inv};
-      const el=document.getElementById("sim3-result");
-      el.innerHTML=`<div class="bg-sky-50 border border-sky-200 rounded-xl p-4 text-sm"><div class="font-bold text-lg mb-1">${qtd} × ${pot}W = ${kwp} kWp</div><div class="text-zinc-600">Inversor: ${inv} • Área ~${Math.round(qtd*2.05)} m²</div><button onclick='gerarPDF(${JSON.stringify(dados)})' class="mt-3 w-full border border-sky-500 text-sky-700 hover:bg-sky-50 py-2.5 rounded-lg text-sm font-medium">📄 Gerar orçamento em PDF</button></div>`;
-      el.classList.remove("hidden");
-    }
-  </script>
+<script>
+const IRRAD={"Goiânia":5.4,"Aparecida de Goiânia":5.3,"Anápolis":5.3,"Brasília":5.7,"São Paulo":4.8};
+const PRECOS={painel570:650,painel600:690,painel610:710,painel630:740,estrutura:130,caboCC:35,mc4:28,caboCABase:600,caboCAKwp:55,stringBoxBase:900,stringBoxKwp:55,protecoesBase:500,protecoesKwp:35,aterramento:18,maoObraKwp:160,projetoKwp:55,monitorBase:350};
+let lastSimulation=null;
+const HISTORY_KEY="yws_simulations_v2";
+function fmt(v){return "R$ "+Number(v).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2})}
+function fmtN(v){return Number(v).toLocaleString("pt-BR")}
+function buildItens(qtd,pot,kwp,invNome,invKw){
+  const pPainel=PRECOS["painel"+pot]||690;
+  const pInv=Math.round((invKw||kwp)*480+1500);
+  const pEst=Math.round(qtd*PRECOS.estrutura);
+  const pCabCC=Math.round(qtd*PRECOS.caboCC+400);
+  const qtdMC4=Math.ceil(qtd/2);
+  const pCabCA=Math.round(PRECOS.caboCABase+kwp*PRECOS.caboCAKwp);
+  const pSB=Math.round(PRECOS.stringBoxBase+kwp*PRECOS.stringBoxKwp);
+  const pProt=Math.round(PRECOS.protecoesBase+kwp*PRECOS.protecoesKwp);
+  const pAter=Math.round(qtd*PRECOS.aterramento+400);
+  const pMO=Math.round(kwp*PRECOS.maoObraKwp+1200);
+  const pProj=Math.round(kwp*PRECOS.projetoKwp+900);
+  const pMon=Math.round(PRECOS.monitorBase+kwp*18);
+  return [
+    {item:"01",qtd:qtd,desc:"Painel solar fotovoltaico "+pot+" W",unit:pPainel},
+    {item:"02",qtd:1,desc:"Inversor solar "+invNome+" "+(invKw||Math.ceil(kwp))+" kW",unit:pInv},
+    {item:"03",qtd:1,desc:"Estrutura de fixação para "+qtd+" painéis",unit:pEst},
+    {item:"04",qtd:1,desc:"Kit de cabos solares CC",unit:pCabCC},
+    {item:"05",qtd:qtdMC4,desc:"Par de conectores MC4",unit:PRECOS.mc4},
+    {item:"06",qtd:1,desc:"Cabos CA e acessórios",unit:pCabCA},
+    {item:"07",qtd:1,desc:"String Box / proteção CC e CA",unit:pSB},
+    {item:"08",qtd:1,desc:"Disjuntores, DPS e proteções",unit:pProt},
+    {item:"09",qtd:1,desc:"Kit de aterramento",unit:pAter},
+    {item:"10",qtd:1,desc:"Instalação e mão de obra",unit:pMO},
+    {item:"11",qtd:1,desc:"Projeto, documentação e homologação",unit:pProj},
+    {item:"12",qtd:1,desc:"Configuração e monitoramento",unit:pMon}
+  ];
+}
+function calcTotals(itens){itens.forEach(i=>i.total=i.qtd*i.unit);const mat=itens.slice(0,9).reduce((s,i)=>s+i.total,0);const srv=itens.slice(9).reduce((s,i)=>s+i.total,0);return{itens,mat,srv,total:mat+srv}}
+function saveHistory(sim){const list=JSON.parse(localStorage.getItem(HISTORY_KEY)||"[]");list.unshift({id:Date.now(),date:new Date().toLocaleString("pt-BR"),tipo:sim.tipo,kwp:sim.kwp,qtd:sim.qtdPaineis,pot:sim.potenciaPainel,total:sim.totalValor||0,data:sim});if(list.length>20)list.pop();localStorage.setItem(HISTORY_KEY,JSON.stringify(list))}
+function showHistory(){const list=JSON.parse(localStorage.getItem(HISTORY_KEY)||"[]");const box=document.getElementById("history-list");if(!list.length){box.innerHTML='<p class="text-center text-slate-500 py-8">Nenhuma simulação salva ainda.</p>'}else{box.innerHTML=list.map(h=>`<div class="border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3"><div><div class="font-medium">${h.tipo} • ${h.kwp} kWp</div><div class="text-xs text-slate-500">${h.date} • ${h.qtd} painéis × ${h.pot}W</div><div class="text-sm font-semibold text-yws-700 mt-0.5">${fmt(h.total)}</div></div><div class="flex gap-2"><button onclick='gerarPDF(${JSON.stringify(h.data)})' class="text-sm bg-yws-50 text-yws-700 px-3 py-1.5 rounded-lg font-medium">PDF</button><button onclick="deleteHistoryItem(${h.id})" class="text-sm text-red-600 px-3 py-1.5 rounded-lg hover:bg-red-50">Excluir</button></div></div>`).join("")}document.getElementById("history-modal").classList.remove("hidden")}
+function closeHistory(){document.getElementById("history-modal").classList.add("hidden")}
+function clearHistory(){localStorage.removeItem(HISTORY_KEY);showHistory()}
+function deleteHistoryItem(id){let list=JSON.parse(localStorage.getItem(HISTORY_KEY)||"[]");list=list.filter(h=>h.id!==id);localStorage.setItem(HISTORY_KEY,JSON.stringify(list));showHistory()}
+function renderResult(containerId,dados,warnings){const{itens,mat,srv,total}=calcTotals(buildItens(dados.qtdPaineis,dados.potenciaPainel,dados.kwp,dados.inversor,dados.invKw));dados.totalValor=total;dados.itens=itens;lastSimulation=dados;saveHistory(dados);let warnHtml="";if(warnings&&warnings.length){warnHtml=warnings.map(w=>`<div class="bg-amber-50 border border-amber-200 text-amber-800 text-sm rounded-lg px-3 py-2 mb-3 flex gap-2"><span>⚠️</span><span>${w}</span></div>`).join("")}const el=document.getElementById(containerId);el.innerHTML=`<div class="result-enter border border-slate-200 rounded-xl overflow-hidden">${warnHtml}<div class="bg-slate-50 px-4 py-3 border-b border-slate-200"><div class="font-semibold text-slate-900">${dados.kwp} kWp • ${dados.qtdPaineis} painéis × ${dados.potenciaPainel}W</div><div class="text-xs text-slate-500 mt-0.5">${dados.tipo}${dados.cidade?" • "+dados.cidade:""}${dados.economia?" • Economia R$ "+fmtN(dados.economia)+"/mês":""}</div></div><div class="p-4 space-y-3 text-sm"><div class="grid grid-cols-2 gap-2"><div class="bg-white border rounded-lg p-3"><div class="text-xs text-slate-500">Potência total</div><div class="font-semibold">${dados.kwp} kWp</div></div><div class="bg-white border rounded-lg p-3"><div class="text-xs text-slate-500">Inversor</div><div class="font-semibold">${dados.inversor}${dados.invKw?" "+dados.invKw+" kW":""}</div></div></div><div class="flex justify-between text-slate-600"><span>Materiais</span><span class="font-medium">${fmt(mat)}</span></div><div class="flex justify-between text-slate-600"><span>Serviços</span><span class="font-medium">${fmt(srv)}</span></div><div class="flex justify-between text-base font-bold text-yws-800 border-t pt-2"><span>Total estimado</span><span>${fmt(total)}</span></div></div><div class="px-4 pb-4"><button onclick="gerarPDF(lastSimulation)" class="w-full bg-yws-700 hover:bg-yws-800 text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2"><i class="fa-solid fa-file-pdf"></i> GERAR ORÇAMENTO EM PDF</button></div></div>`;el.classList.remove("hidden")}
+function gerarPDF(dados){if(!dados||!dados.qtdPaineis){alert("Faça uma simulação antes de gerar o orçamento.");return}const{jsPDF}=window.jspdf;const doc=new jsPDF({orientation:"portrait",unit:"mm",format:"a4"});const pageW=doc.internal.pageSize.getWidth();const m=14;let y=12;const{itens,mat,srv,total}=calcTotals(buildItens(dados.qtdPaineis,dados.potenciaPainel,dados.kwp,dados.inversor||"Growatt",dados.invKw));const orcId="YWS-"+new Date().getFullYear()+"-"+String(Date.now()).slice(-6);const dataStr=new Date().toLocaleDateString("pt-BR");doc.setFillColor(30,64,175);doc.rect(0,0,pageW,28,"F");doc.setTextColor(255,255,255);doc.setFontSize(18);doc.setFont("helvetica","bold");doc.text("YWS SOLAR",m,13);doc.setFontSize(8);doc.setFont("helvetica","normal");doc.text("Soluções elétricas e energia solar • Goiás",m,20);doc.setFontSize(8);doc.text(orcId,pageW-m,12,{align:"right"});doc.text("WhatsApp: (62) 99175-8807",pageW-m,18,{align:"right"});doc.text(dataStr,pageW-m,24,{align:"right"});y=36;doc.setTextColor(30,64,175);doc.setFontSize(11);doc.setFont("helvetica","bold");doc.text("ORÇAMENTO COMERCIAL — SISTEMA FOTOVOLTAICO "+dados.kwp.toFixed(1)+" kWp",pageW/2,y,{align:"center"});y+=8;doc.setFillColor(239,246,255);doc.roundedRect(m,y,pageW-m*2,18,2,2,"F");doc.setTextColor(30,30,30);doc.setFontSize(8);doc.setFont("helvetica","bold");doc.text("Dados do sistema",m+3,y+5);doc.setFont("helvetica","normal");doc.text("Potência: "+dados.kwp.toFixed(1)+" kWp",m+3,y+11);doc.text("Painéis: "+dados.qtdPaineis+" × "+dados.potenciaPainel+" W",m+55,y+11);doc.text("Inversor: "+(dados.inversor||"Growatt")+(dados.invKw?" "+dados.invKw+" kW":""),m+120,y+11);if(dados.economia){doc.text("Economia estimada: R$ "+fmtN(dados.economia)+"/mês",m+3,y+16)}y+=24;doc.setFontSize(9);doc.setFont("helvetica","bold");doc.setTextColor(30,64,175);doc.text("Composição do sistema",m,y);y+=5;const col=[m,m+10,m+22,m+115,m+145];doc.setFillColor(30,64,175);doc.rect(m,y,pageW-m*2,6.5,"F");doc.setTextColor(255,255,255);doc.setFontSize(7);doc.text("Item",col[0]+1,y+4.2);doc.text("Qtd",col[1]+1,y+4.2);doc.text("Descrição",col[2]+1,y+4.2);doc.text("Unitário",col[3]+1,y+4.2);doc.text("Total",col[4]+1,y+4.2);y+=6.5;doc.setTextColor(30,30,30);doc.setFont("helvetica","normal");itens.forEach((row,idx)=>{if(y>252){doc.addPage();y=20}if(idx%2===0){doc.setFillColor(248,250,252);doc.rect(m,y,pageW-m*2,6,"F")}doc.setFontSize(7);doc.text(row.item,col[0]+1,y+4);doc.text(String(row.qtd),col[1]+1,y+4);doc.text(row.desc.substring(0,50),col[2]+1,y+4);doc.text(fmt(row.unit),col[3]+1,y+4);doc.text(fmt(row.total),col[4]+1,y+4);y+=6});y+=5;doc.setFontSize(9);doc.setFont("helvetica","bold");doc.setTextColor(30,64,175);doc.text("Resumo financeiro",m,y);y+=5;doc.setFillColor(239,246,255);doc.roundedRect(m,y,pageW-m*2,20,2,2,"F");doc.setTextColor(30,30,30);doc.setFontSize(8);doc.setFont("helvetica","normal");doc.text("Materiais e equipamentos",m+3,y+6);doc.text(fmt(mat),pageW-m-3,y+6,{align:"right"});doc.text("Serviços, instalação e documentação",m+3,y+12);doc.text(fmt(srv),pageW-m-3,y+12,{align:"right"});doc.setFont("helvetica","bold");doc.setFontSize(9);doc.setTextColor(30,64,175);doc.text("TOTAL DO ORÇAMENTO",m+3,y+18);doc.text(fmt(total),pageW-m-3,y+18,{align:"right"});y+=26;doc.setFontSize(7);doc.setTextColor(100,100,100);doc.setFont("helvetica","normal");doc.text("Orçamento gerado automaticamente a partir da simulação. Valores sujeitos a confirmação técnica.",m,y);y+=4;doc.text("Validade: 15 dias a partir da data de emissão. Não inclui eventuais obras civis ou adequações de padrão.",m,y);y+=10;doc.setDrawColor(30,64,175);doc.setLineWidth(0.4);doc.rect(pageW/2-15,y,30,30);doc.setFontSize(6);doc.setTextColor(30,64,175);doc.text("QR Code",pageW/2,y+15,{align:"center"});doc.text("demonstrativo",pageW/2,y+19,{align:"center"});y+=36;doc.setFontSize(7);doc.setTextColor(120,120,120);doc.text("WhatsApp: (62) 99175-8807  •  YWS Solar",pageW/2,y,{align:"center"});doc.setDrawColor(30,64,175);doc.line(m,285,pageW-m,285);doc.setFontSize(7);doc.setTextColor(100,100,100);doc.text("YWS Solar — Transformando o sol em economia.",m,290);doc.text("www.ywssolar.com.br",pageW-m,290,{align:"right"});doc.save("YWS_Orcamento_"+dados.kwp.toFixed(1).replace(".",",")+"kWp_"+orcId+".pdf")}
+function runSim1(){const conta=parseFloat(document.getElementById("s1-conta").value)||0;const cidade=document.getElementById("s1-cidade").value;const tipo=document.getElementById("s1-tipo").value;if(conta<50){alert("Informe um valor de conta válido (mínimo R$ 50).");return}const ir=IRRAD[cidade]||5.2;const kwh=Math.round(conta/0.95);const kwp=kwh/(ir*30*0.82);const qtd=Math.ceil(kwp/0.6);const economia=Math.round(kwh*0.9);const geracao=Math.round(kwp*ir*30*0.82);const dados={tipo:"Consumo ("+tipo+")",kwp:parseFloat(kwp.toFixed(1)),qtdPaineis:qtd,potenciaPainel:600,inversor:"Growatt",invKw:Math.ceil(kwp*1.05),economia,cidade,kwh,geracao};renderResult("s1-out",dados,[])}
+function runSim2(){const comp=parseFloat(document.getElementById("s2-comp").value)||0;const larg=parseFloat(document.getElementById("s2-larg").value)||0;const fator=parseFloat(document.getElementById("s2-telhado").value)||0.78;if(comp<1||larg<1){alert("Informe dimensões válidas.");return}const areaTotal=comp*larg;const areaUtil=Math.round(areaTotal*fator);const qtd=Math.floor(areaUtil/2.05);const kwp=parseFloat((qtd*0.6).toFixed(1));const warnings=[];if(qtd<4)warnings.push("Área disponível insuficiente para um sistema residencial típico (mínimo recomendado: 4 painéis).");const dados={tipo:"Área disponível",kwp,qtdPaineis:Math.max(qtd,0),potenciaPainel:600,inversor:"Growatt",invKw:Math.max(1,Math.ceil(kwp*1.05)),areaTotal,areaUtil};renderResult("s2-out",dados,warnings)}
+function runSim3(){const qtd=parseInt(document.getElementById("s3-qtd").value)||0;const pot=parseInt(document.getElementById("s3-pot").value)||600;const inv=document.getElementById("s3-inv").value;const invKw=parseFloat(document.getElementById("s3-invkw").value)||0;if(qtd<1){alert("Informe a quantidade de painéis.");return}const kwp=parseFloat(((qtd*pot)/1000).toFixed(1));const warnings=[];if(invKw<kwp*0.9)warnings.push("Sistema superdimensionado: a potência do inversor ("+invKw+" kW) é inferior à potência instalada ("+kwp+" kWp). Revise a capacidade do inversor.");if(invKw>kwp*1.4)warnings.push("Sistema subdimensionado: o inversor ("+invKw+" kW) está muito acima da potência dos painéis ("+kwp+" kWp). Considere reduzir o inversor.");const dados={tipo:"Equipamentos",kwp,qtdPaineis:qtd,potenciaPainel:pot,inversor:inv,invKw};renderResult("s3-out",dados,warnings)}
+</script>
 </body>
 </html>
